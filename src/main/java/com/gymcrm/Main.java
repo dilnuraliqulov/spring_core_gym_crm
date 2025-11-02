@@ -10,5 +10,8 @@ public class Main {
         ApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
         System.out.println("Spring Context Loaded Successfully!");
 
+        var traineeService = context.getBean("traineeServiceImpl", com.gymcrm.service.impl.TraineeServiceImpl.class);
+        System.out.println("Trainee Service Bean Loaded: " + traineeService);
+
     }
 }

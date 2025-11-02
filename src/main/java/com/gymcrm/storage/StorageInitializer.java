@@ -2,6 +2,8 @@ package com.gymcrm.storage;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.gymcrm.model.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -26,7 +28,10 @@ public class StorageInitializer implements BeanPostProcessor {
     @Value("${data.trainingtypes.path}")
     private String trainingTypesFilePath;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new ObjectMapper()
+            .registerModule(new JavaTimeModule())
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
 
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) {
