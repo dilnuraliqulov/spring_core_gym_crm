@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "userId": 1,
+    "specialization": "Cardio"
+  },
+  {
+    "id": 2,
+    "userId": 2,
+    "specialization": "Strength Training"
+  }
+]

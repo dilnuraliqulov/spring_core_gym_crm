@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "traineeId": 1,
+    "trainerId": 1,
+    "trainingName": "Morning Cardio",
+    "trainingType": {
+      "id": 1,
+      "trainingTypeName": "Cardio"
+    },
+    "trainingDate": "2024-10-31",
+    "trainingDuration": 60
+  },
+  {
+    "id": 2,
+    "traineeId": 2,
+    "trainerId": 2,
+    "trainingName": "Evening Strength",
+    "trainingType": {
+      "id": 2,
+      "trainingTypeName": "Strength"
+    },
+    "trainingDate": "2024-11-01",
+    "trainingDuration": 90
+  }
+]
