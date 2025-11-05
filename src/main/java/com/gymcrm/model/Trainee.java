@@ -19,3 +19,4 @@ public class Trainee extends User {
         this.address = address;
     }
 }
+
