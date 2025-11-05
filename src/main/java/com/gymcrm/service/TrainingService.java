@@ -9,5 +9,4 @@ public interface TrainingService {
     Training save(Training training);
     Optional<Training> findById(Long id);
     List<Training> findAll();
-    void deleteById(Long id);
 }
