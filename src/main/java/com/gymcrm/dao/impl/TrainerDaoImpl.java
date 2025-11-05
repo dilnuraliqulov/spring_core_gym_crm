@@ -20,7 +20,7 @@ public class TrainerDaoImpl implements GenericDao<Trainer> {
     @Override
     public Trainer save(Trainer trainer) {
         log.info("Saving trainer: {}", trainer);
-        trainerStorage.put(trainer.getId(), trainer);
+        trainerStorage.put(trainer.getId(), trainer); // no getter
         return trainer;
     }
 
