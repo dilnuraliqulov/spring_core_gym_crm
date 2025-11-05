@@ -1,10 +1,6 @@
 package com.gymcrm.storage;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.gymcrm.model.*;
 import jakarta.annotation.PostConstruct;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
+import java.lang.reflect.Method;
 import java.util.List;
 
 @Slf4j
@@ -30,10 +27,7 @@ public class StorageInitializer {
     @Value("${data.trainingtypes.path}")
     private Resource trainingTypesResource;
 
-    private final ObjectMapper objectMapper = new ObjectMapper()
-            .registerModule(new JavaTimeModule())
-            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     private final TrainerStorage trainerStorage;
     private final TraineeStorage traineeStorage;
@@ -53,34 +47,29 @@ public class StorageInitializer {
     @PostConstruct
     @SneakyThrows
     public void init() {
-        loadData();
+        loadList(trainersResource, trainerStorage);
+        loadList(traineesResource, traineeStorage);
+        loadList(trainingsResource, trainingStorage);
+        loadList(trainingTypesResource, trainingTypeStorage);
         log.info("In-memory storages initialized successfully!");
     }
 
     @SneakyThrows
-    private void loadData() {
-        // Load Trainers
-        List<Trainer> trainers = objectMapper.readValue(
-                trainersResource.getInputStream(), new TypeReference<>() {}
+    private <T> void loadList(Resource resource, TypedStorage<T> storage) {
+        List<T> list = objectMapper.readValue(
+                resource.getInputStream(),
+                objectMapper.getTypeFactory().constructCollectionType(List.class, storage.getType())
         );
-        trainers.forEach(t -> trainerStorage.getTrainerStorage().put(t.getId(), t));
+        list.forEach(item -> storage.put(getId(item), item));
+    }
 
-        // Load Trainees
-        List<Trainee> trainees = objectMapper.readValue(
-                traineesResource.getInputStream(), new TypeReference<>() {}
-        );
-        trainees.forEach(t -> traineeStorage.getTraineeStorage().put(t.getId(), t));
-
-        // Load Trainings
-        List<Training> trainings = objectMapper.readValue(
-                trainingsResource.getInputStream(), new TypeReference<>() {}
-        );
-        trainings.forEach(t -> trainingStorage.getTraningStorage().put(t.getId(), t));
-
-        // Load Training Types
-        List<TrainingType> trainingTypes = objectMapper.readValue(
-                trainingTypesResource.getInputStream(), new TypeReference<>() {}
-        );
-        trainingTypes.forEach(tt -> trainingTypeStorage.getTrainingTypeStorage().put(tt.getId(), tt));
+    @SuppressWarnings("unchecked")
+    private <T> Long getId(T item) {
+        try {
+            Method getIdMethod = item.getClass().getMethod("getId");
+            return (Long) getIdMethod.invoke(item);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to get id from item: " + item, e);
+        }
     }
 }
