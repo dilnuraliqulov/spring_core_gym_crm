@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of="id")
-public class User {
+public class User implements IdAccessor {
    private Long id;
    private String firstName;
    private String lastName;

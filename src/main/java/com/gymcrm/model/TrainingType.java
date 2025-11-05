@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(of="id")
-public class TrainingType {
+public class TrainingType implements IdAccessor {
 private Long id;
 private String trainingTypeName;
 }
