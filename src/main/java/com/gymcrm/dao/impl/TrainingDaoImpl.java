@@ -24,25 +24,23 @@ public class TrainingDaoImpl implements GenericDao<Training> {
      */
     @Override
     public Training save(Training training) {
-        if (trainingStorage.getTraningStorage().containsKey(training.getId())) {
+        if (trainingStorage.containsKey(training.getId())) { // use containsKey directly
             log.warn("Update operation not supported for trainings with id: {}", training.getId());
             throw new UnsupportedOperationException("Updating trainings is not supported");
         }
         log.info("Creating new training: {}", training);
-        trainingStorage.getTraningStorage().put(training.getId(), training);
+        trainingStorage.put(training.getId(), training); // put directly
         return training;
     }
 
     @Override
     public Optional<Training> findById(Long id) {
-        log.info("Fetching training with id: {}", id);
-        return Optional.ofNullable(trainingStorage.getTraningStorage().get(id));
+        return Optional.ofNullable(trainingStorage.get(id));
     }
 
     @Override
     public List<Training> findAll() {
-        log.info("Fetching all trainings");
-        return List.copyOf(trainingStorage.getTraningStorage().values());
+        return List.copyOf(trainingStorage.values());
     }
 
     @Override

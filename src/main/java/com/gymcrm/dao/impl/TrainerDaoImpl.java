@@ -20,20 +20,18 @@ public class TrainerDaoImpl implements GenericDao<Trainer> {
     @Override
     public Trainer save(Trainer trainer) {
         log.info("Saving trainer: {}", trainer);
-        trainerStorage.getTrainerStorage().put(trainer.getId(), trainer);
+        trainerStorage.put(trainer.getId(), trainer); // no getter
         return trainer;
     }
 
     @Override
     public Optional<Trainer> findById(Long id) {
-        log.info("Fetching trainer with id: {}", id);
-        return Optional.ofNullable(trainerStorage.getTrainerStorage().get(id));
+        return Optional.ofNullable(trainerStorage.get(id));
     }
 
     @Override
     public List<Trainer> findAll() {
-        log.info("Fetching all trainers");
-        return List.copyOf(trainerStorage.getTrainerStorage().values());
+        return List.copyOf(trainerStorage.values());
     }
 
     @Override
