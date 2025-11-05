@@ -6,7 +6,6 @@ import com.gymcrm.model.Training;
 import com.gymcrm.service.TraineeService;
 import com.gymcrm.service.TrainerService;
 import com.gymcrm.service.TrainingService;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -15,12 +14,20 @@ import java.util.Optional;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class GymFacade {
 
     private final TraineeService traineeService;
     private final TrainerService trainerService;
     private final TrainingService trainingService;
+
+    //Constructor-based injection for services
+    public GymFacade(TraineeService traineeService,
+                     TrainerService trainerService,
+                     TrainingService trainingService) {
+        this.traineeService = traineeService;
+        this.trainerService = trainerService;
+        this.trainingService = trainingService;
+    }
 
     //Trainee operations
 
@@ -75,7 +82,7 @@ public class GymFacade {
 
     public Training createTraining(Training training) {
         log.info("Creating training: {}", training);
-        return trainingService.save(training);
+        return trainingService.save(training); // save() is create-only
     }
 
     public Optional<Training> getTrainingById(Long id) {
@@ -87,4 +94,5 @@ public class GymFacade {
         log.info("Fetching all trainings");
         return trainingService.findAll();
     }
+
 }
