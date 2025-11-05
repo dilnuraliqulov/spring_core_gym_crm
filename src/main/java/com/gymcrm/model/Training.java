@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(of="id")
-public class Training {
+public class Training implements IdAccessor {
     private Long id;
     private Long traineeId;
     private Long trainerId;
