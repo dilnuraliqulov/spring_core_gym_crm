@@ -20,25 +20,24 @@ public class TraineeDaoImpl implements GenericDao<Trainee> {
     @Override
     public Trainee save(Trainee trainee) {
         log.info("Saving trainee: {}", trainee);
-        traineeStorage.getTraineeStorage().put(trainee.getId(), trainee);
+        traineeStorage.put(trainee.getId(), trainee);
         return trainee;
     }
 
     @Override
     public Optional<Trainee> findById(Long id) {
-        log.info("Fetching trainee with id: {}", id);
-        return Optional.ofNullable(traineeStorage.getTraineeStorage().get(id));
+        return Optional.ofNullable(traineeStorage.get(id));
     }
 
     @Override
     public List<Trainee> findAll() {
-        log.info("Fetching all trainees");
-        return List.copyOf(traineeStorage.getTraineeStorage().values());
+        return List.copyOf(traineeStorage.values());
     }
 
     @Override
     public void deleteById(Long id) {
         log.info("Deleting trainee with id: {}", id);
-        traineeStorage.getTraineeStorage().remove(id);
+        traineeStorage.remove(id);
     }
+
 }
