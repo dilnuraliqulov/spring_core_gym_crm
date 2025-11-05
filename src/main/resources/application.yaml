@@ -1,0 +1,12 @@
+# src/main/resources/application.yaml
+
+data:
+  trainers:
+    path: classpath:data/trainers.json
+  trainees:
+    path: classpath:data/trainees.json
+  trainings:
+    path: classpath:data/trainings.json
+  trainingtypes:
+    path: classpath:data/trainingTypes.json
+

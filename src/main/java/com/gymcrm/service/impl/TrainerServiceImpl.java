@@ -35,9 +35,4 @@ public class TrainerServiceImpl implements TrainerService {
         return trainerDao.findAll();
     }
 
-    @Override
-    public void deleteById(Long id) {
-        log.info("Service: deleting trainer with id {}", id);
-        trainerDao.deleteById(id);
-    }
 }

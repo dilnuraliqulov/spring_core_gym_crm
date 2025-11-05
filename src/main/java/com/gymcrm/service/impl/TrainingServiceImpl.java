@@ -19,7 +19,14 @@ public class TrainingServiceImpl implements TrainingService {
 
     @Override
     public Training save(Training training) {
-        log.info("Service: saving training {}", training);
+        log.info("Service: creating training {}", training);
+
+        if (training.getId() != null && trainingDao.findById(training.getId()).isPresent()) {
+            throw new UnsupportedOperationException(
+                    "Updating existing training is not supported. Training id: " + training.getId()
+            );
+        }
+
         return trainingDao.save(training);
     }
 
@@ -35,9 +42,5 @@ public class TrainingServiceImpl implements TrainingService {
         return trainingDao.findAll();
     }
 
-    @Override
-    public void deleteById(Long id) {
-        log.info("Service: deleting training with id {}", id);
-        trainingDao.deleteById(id);
-    }
+
 }

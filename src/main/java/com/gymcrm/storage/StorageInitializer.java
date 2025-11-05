@@ -1,67 +1,75 @@
 package com.gymcrm.storage;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.gymcrm.model.*;
+import jakarta.annotation.PostConstruct;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
-import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.List;
 
+@Slf4j
 @Component
-public class StorageInitializer implements BeanPostProcessor {
+public class StorageInitializer {
 
     @Value("${data.trainers.path}")
-    private String trainersFilePath;
+    private Resource trainersResource;
 
     @Value("${data.trainees.path}")
-    private String traineesFilePath;
+    private Resource traineesResource;
 
     @Value("${data.trainings.path}")
-    private String trainingsFilePath;
+    private Resource trainingsResource;
 
     @Value("${data.trainingtypes.path}")
-    private String trainingTypesFilePath;
+    private Resource trainingTypesResource;
 
-    private final ObjectMapper objectMapper = new ObjectMapper()
-            .registerModule(new JavaTimeModule())
-            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
+    private final TrainerStorage trainerStorage;
+    private final TraineeStorage traineeStorage;
+    private final TrainingStorage trainingStorage;
+    private final TrainingTypeStorage trainingTypeStorage;
 
-    @Override
-    public Object postProcessAfterInitialization(Object bean, String beanName) {
-        if (bean instanceof InMemoryStorage storage) {
-            try {
-                loadData(storage);
-            } catch (IOException e) {
-                throw new RuntimeException("Failed to load data into in-memory storage", e);
-            }
-        }
-        return bean;
+    public StorageInitializer(TrainerStorage trainerStorage,
+                              TraineeStorage traineeStorage,
+                              TrainingStorage trainingStorage,
+                              TrainingTypeStorage trainingTypeStorage) {
+        this.trainerStorage = trainerStorage;
+        this.traineeStorage = traineeStorage;
+        this.trainingStorage = trainingStorage;
+        this.trainingTypeStorage = trainingTypeStorage;
     }
 
-    private void loadData(InMemoryStorage storage) throws IOException {
-        // Read and store Trainers
-        List<Trainer> trainers = objectMapper.readValue(new File(trainersFilePath), new TypeReference<>() {});
-        trainers.forEach(t -> storage.getTrainerStorage().put(t.getId(), t));
+    @PostConstruct
+    @SneakyThrows
+    public void init() {
+        loadList(trainersResource, trainerStorage);
+        loadList(traineesResource, traineeStorage);
+        loadList(trainingsResource, trainingStorage);
+        loadList(trainingTypesResource, trainingTypeStorage);
+        log.info("In-memory storages initialized successfully!");
+    }
 
-        // Read and store Trainees
-        List<Trainee> trainees = objectMapper.readValue(new File(traineesFilePath), new TypeReference<>() {});
-        trainees.forEach(t -> storage.getTraineeStorage().put(t.getId(), t));
+    @SneakyThrows
+    private <T> void loadList(Resource resource, TypedStorage<T> storage) {
+        List<T> list = objectMapper.readValue(
+                resource.getInputStream(),
+                objectMapper.getTypeFactory().constructCollectionType(List.class, storage.getType())
+        );
+        list.forEach(item -> storage.put(getId(item), item));
+    }
 
-        // Read and store Trainings
-        List<Training> trainings = objectMapper.readValue(new File(trainingsFilePath), new TypeReference<>() {});
-        trainings.forEach(t -> storage.getTrainingStorage().put(t.getId(), t));
-
-        // Read and store TrainingTypes
-        List<TrainingType> trainingTypes = objectMapper.readValue(new File(trainingTypesFilePath), new TypeReference<>() {});
-        trainingTypes.forEach(t -> storage.getTrainingTypeStorage().put(t.getId(), t));
-
-        System.out.println(" In-memory storage initialized successfully!");
+    @SuppressWarnings("unchecked")
+    private <T> Long getId(T item) {
+        try {
+            Method getIdMethod = item.getClass().getMethod("getId");
+            return (Long) getIdMethod.invoke(item);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to get id from item: " + item, e);
+        }
     }
 }
