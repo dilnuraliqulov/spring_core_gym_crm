@@ -1,0 +1,14 @@
+[
+  {
+    "id": 1,
+    "trainingTypeName": "Cardio"
+  },
+  {
+    "id": 2,
+    "trainingTypeName": "Strength"
+  },
+  {
+    "id": 3,
+    "trainingTypeName": "Yoga"
+  }
+]
