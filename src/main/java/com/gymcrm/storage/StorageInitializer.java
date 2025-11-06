@@ -1,6 +1,7 @@
 package com.gymcrm.storage;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gymcrm.model.IdAccessor;
 import jakarta.annotation.PostConstruct;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -8,7 +9,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.Method;
 import java.util.List;
 
 @Slf4j
@@ -55,21 +55,12 @@ public class StorageInitializer {
     }
 
     @SneakyThrows
-    private <T> void loadList(Resource resource, TypedStorage<T> storage) {
+    private <T extends IdAccessor> void loadList(Resource resource, TypedStorage<T> storage) {
         List<T> list = objectMapper.readValue(
                 resource.getInputStream(),
                 objectMapper.getTypeFactory().constructCollectionType(List.class, storage.getType())
         );
-        list.forEach(item -> storage.put(getId(item), item));
+        list.forEach(item -> storage.put(item.getId(), item));
     }
 
-    @SuppressWarnings("unchecked")
-    private <T> Long getId(T item) {
-        try {
-            Method getIdMethod = item.getClass().getMethod("getId");
-            return (Long) getIdMethod.invoke(item);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to get id from item: " + item, e);
-        }
-    }
 }
