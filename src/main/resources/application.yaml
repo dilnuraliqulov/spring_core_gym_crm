@@ -8,5 +8,5 @@ data:
   trainings:
     path: classpath:data/trainings.json
   trainingtypes:
-    path: classpath:data/training-types.json
+    path: classpath:data/trainingTypes.json
 
