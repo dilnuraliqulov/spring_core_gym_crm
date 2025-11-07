@@ -1,7 +1,8 @@
-package com.gymcrm.service.impl;
+package com.gymcrm.service;
 
 import com.gymcrm.model.Trainee;
 import com.gymcrm.dao.GenericDao;
+import com.gymcrm.service.impl.TraineeServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -9,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -54,6 +56,27 @@ class TraineeServiceImplTest {
         assertEquals("Smith", result.get().getLastName());
         verify(traineeDao).findById(1L);
     }
+
+    @Test
+    void testFindAllTrainees() {
+
+        Trainee trainee2 = new Trainee();
+        trainee2.setId(2L);
+        trainee2.setFirstName("Alice");
+        trainee2.setLastName("Brown");
+
+        List<Trainee> trainees = List.of(trainee, trainee2);
+        when(traineeDao.findAll()).thenReturn(trainees);
+
+        List<Trainee> result = traineeService.findAll();
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertEquals("John", result.get(0).getFirstName());
+        assertEquals("Alice", result.get(1).getFirstName());
+
+        verify(traineeDao, times(1)).findAll();
+    }
+
 
     @Test
     void testDeleteTraineeById() {
