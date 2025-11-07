@@ -1,18 +1,21 @@
 package com.gymcrm;
 
 import com.gymcrm.config.AppConfig;
-import com.gymcrm.facade.GymFacade;
+import com.gymcrm.service.impl.TraineeServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 public class Main {
 
+    private static final Logger log = LoggerFactory.getLogger(Main.class);
+
     public static void main(String[] args) {
         ApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
-        System.out.println("Spring Context Loaded Successfully!");
+        log.info("Spring Context Loaded Successfully!");
 
-        GymFacade facade = context.getBean(GymFacade.class);
-
-        System.out.println("All trainees: " + facade.getAllTrainees());
+        TraineeServiceImpl traineeService = context.getBean("traineeServiceImpl", TraineeServiceImpl.class);
+        log.info("Trainee Service Bean Loaded: {}", traineeService);
     }
 }
