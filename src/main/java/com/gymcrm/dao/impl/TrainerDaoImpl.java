@@ -19,7 +19,7 @@ public class TrainerDaoImpl implements GenericDao<Trainer> {
 
     @Override
     public Trainer save(Trainer trainer) {
-        log.info("Saving trainer: {}", trainer);
+        log.info("DAO:Saving trainer: {}", trainer);
         trainerStorage.put(trainer.getId(), trainer); // no getter
         return trainer;
     }
@@ -36,7 +36,7 @@ public class TrainerDaoImpl implements GenericDao<Trainer> {
 
     @Override
     public void deleteById(Long id) {
-        log.warn("Delete operation not supported for trainers");
+        log.warn("DAO:Delete operation not supported for trainers");
         throw new UnsupportedOperationException("Deleting trainers is not supported");
     }
 }

@@ -19,7 +19,7 @@ public class TrainingServiceImpl implements TrainingService {
 
     @Override
     public Training save(Training training) {
-        log.info("Service: creating training {}", training);
+        log.debug("Service: creating training {}", training);
 
         if (training.getId() != null && trainingDao.findById(training.getId()).isPresent()) {
             throw new UnsupportedOperationException(
@@ -32,13 +32,13 @@ public class TrainingServiceImpl implements TrainingService {
 
     @Override
     public Optional<Training> findById(Long id) {
-        log.info("Service: fetching training with id {}", id);
+        log.debug("Service: fetching training with id {}", id);
         return trainingDao.findById(id);
     }
 
     @Override
     public List<Training> findAll() {
-        log.info("Service: fetching all trainings");
+        log.debug("Service: fetching all trainings");
         return trainingDao.findAll();
     }
 

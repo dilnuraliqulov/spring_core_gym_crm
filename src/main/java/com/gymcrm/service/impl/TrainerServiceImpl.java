@@ -19,19 +19,19 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Override
     public Trainer save(Trainer trainer) {
-        log.info("Service: saving trainer {}", trainer);
+        log.debug("Service: saving trainer {}", trainer);
         return trainerDao.save(trainer);
     }
 
     @Override
     public Optional<Trainer> findById(Long id) {
-        log.info("Service: fetching trainer with id {}", id);
+        log.debug("Service: fetching trainer with id {}", id);
         return trainerDao.findById(id);
     }
 
     @Override
     public List<Trainer> findAll() {
-        log.info("Service: fetching all trainers");
+        log.debug("Service: fetching all trainers");
         return trainerDao.findAll();
     }
 

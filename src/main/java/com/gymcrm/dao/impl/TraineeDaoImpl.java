@@ -19,7 +19,7 @@ public class TraineeDaoImpl implements GenericDao<Trainee> {
 
     @Override
     public Trainee save(Trainee trainee) {
-        log.info("Saving trainee: {}", trainee);
+        log.trace("DAO:Saving trainee: {}", trainee);
         traineeStorage.put(trainee.getId(), trainee);
         return trainee;
     }
@@ -36,7 +36,7 @@ public class TraineeDaoImpl implements GenericDao<Trainee> {
 
     @Override
     public void deleteById(Long id) {
-        log.info("Deleting trainee with id: {}", id);
+        log.trace("DAO:Deleting trainee with id: {}", id);
         traineeStorage.remove(id);
     }
 

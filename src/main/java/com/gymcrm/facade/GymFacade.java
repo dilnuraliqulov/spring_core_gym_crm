@@ -25,66 +25,66 @@ public class GymFacade {
     //Trainee operations
 
     public Trainee createTrainee(Trainee trainee) {
-        log.info("Creating trainee: {}", trainee);
+        log.debug("Facade:Creating trainee: {}", trainee);
         return traineeService.save(trainee);
     }
 
     public Trainee updateTrainee(Trainee trainee) {
-        log.info("Updating trainee: {}", trainee);
+        log.debug("Facade:Updating trainee: {}", trainee);
         return traineeService.save(trainee);
     }
 
     public void deleteTrainee(Long id) {
-        log.info("Deleting trainee with id: {}", id);
+        log.debug("Facade:Deleting trainee with id: {}", id);
         traineeService.deleteById(id);
     }
 
     public Optional<Trainee> getTraineeById(Long id) {
-        log.info("Fetching trainee with id: {}", id);
+        log.debug("Facade:Fetching trainee with id: {}", id);
         return traineeService.findById(id);
     }
 
     public List<Trainee> getAllTrainees() {
-        log.info("Fetching all trainees");
+        log.debug("Facade:Fetching all trainees");
         return traineeService.findAll();
     }
 
     //Trainer operations
 
     public Trainer createTrainer(Trainer trainer) {
-        log.info("Creating trainer: {}", trainer);
+        log.debug("Facade:Creating trainer: {}", trainer);
         return trainerService.save(trainer);
     }
 
     public Trainer updateTrainer(Trainer trainer) {
-        log.info("Updating trainer: {}", trainer);
+        log.debug("Facade:Updating trainer: {}", trainer);
         return trainerService.save(trainer);
     }
 
     public Optional<Trainer> getTrainerById(Long id) {
-        log.info("Fetching trainer with id: {}", id);
+        log.debug("Facade:Fetching trainer with id: {}", id);
         return trainerService.findById(id);
     }
 
     public List<Trainer> getAllTrainers() {
-        log.info("Fetching all trainers");
+        log.debug("Facade:Fetching all trainers");
         return trainerService.findAll();
     }
 
     //Training operations
 
     public Training createTraining(Training training) {
-        log.info("Creating training: {}", training);
+        log.debug("Facade:Creating training: {}", training);
         return trainingService.save(training); // save() is create-only
     }
 
     public Optional<Training> getTrainingById(Long id) {
-        log.info("Fetching training with id: {}", id);
+        log.debug("Facade:Fetching training with id: {}", id);
         return trainingService.findById(id);
     }
 
     public List<Training> getAllTrainings() {
-        log.info("Fetching all trainings");
+        log.debug("Facade:Fetching all trainings");
         return trainingService.findAll();
     }
 

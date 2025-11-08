@@ -20,8 +20,8 @@ public class Main {
         GymFacade facade = context.getBean(GymFacade.class);
 
         // Example usage
-        log.info("All trainees: {}", facade.getAllTrainees());
-        log.info("All trainers: {}", facade.getAllTrainers());
-        log.info("All trainings: {}", facade.getAllTrainings());
+        log.debug("All trainees: {}", facade.getAllTrainees());
+        log.debug("All trainers: {}", facade.getAllTrainers());
+        log.debug("All trainings: {}", facade.getAllTrainings());
     }
 }
