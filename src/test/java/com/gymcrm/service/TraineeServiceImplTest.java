@@ -10,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,15 +36,63 @@ class TraineeServiceImplTest {
         trainee.setLastName("Smith");
     }
 
+
     @Test
-    void testSaveTrainee() {
-        when(traineeDao.save(trainee)).thenReturn(trainee);
+    void testSaveTrainee_GeneratesUsernameAndPassword() {
+        // Arrange
+        when(traineeDao.findAll()).thenReturn(Collections.emptyList());
+        when(traineeDao.save(any(Trainee.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Trainee result = traineeService.save(trainee);
 
-        assertNotNull(result);
+        assertNotNull(result.getUsername(), "Username should be generated");
+        assertNotNull(result.getPassword(), "Password should be generated");
+        assertEquals(10, result.getPassword().length(), "Password should be 10 characters long");
         assertEquals("John", result.getFirstName());
-        verify(traineeDao, times(1)).save(trainee);
+        assertEquals("Smith", result.getLastName());
+
+        verify(traineeDao, times(1)).findAll();
+        verify(traineeDao, times(1)).save(result);
+    }
+
+    @Test
+    void testSaveTrainee_DuplicateUsername() {
+        // Arrange: existing trainee with same name
+        Trainee existing = new Trainee();
+        existing.setUsername("John.Smith");
+
+        when(traineeDao.findAll()).thenReturn(List.of(existing));
+        when(traineeDao.save(any(Trainee.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Trainee newTrainee = new Trainee();
+        newTrainee.setFirstName("John");
+        newTrainee.setLastName("Smith");
+
+        Trainee result = traineeService.save(newTrainee);
+
+        assertEquals("John.Smith1", result.getUsername(), "Duplicate username should get numeric suffix");
+        assertNotNull(result.getPassword());
+
+        verify(traineeDao, times(1)).findAll();
+        verify(traineeDao, times(1)).save(result);
+    }
+
+    @Test
+    void testSaveTrainee_KeepsExistingUsernamePassword() {
+        // Arrange: trainee already has username/password
+        trainee.setUsername("ExistingUser");
+        trainee.setPassword("ExistingPass");
+
+        when(traineeDao.findAll()).thenReturn(Collections.emptyList());
+        when(traineeDao.save(any(Trainee.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Trainee result = traineeService.save(trainee);
+
+        assertEquals("ExistingUser", result.getUsername());
+        assertEquals("ExistingPass", result.getPassword());
+
+        verify(traineeDao, times(1)).findAll();
+        verify(traineeDao, times(1)).save(result);
     }
 
     @Test

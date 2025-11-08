@@ -37,16 +37,58 @@ class TrainerServiceImplTest {
     }
 
     @Test
-    void testSaveTrainer() {
-        when(trainerDao.save(trainer)).thenReturn(trainer);
+    void testSaveTrainer_GeneratesUsernameAndPassword() {
+        when(trainerDao.findAll()).thenReturn(List.of());
+        when(trainerDao.save(any(Trainer.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Trainer result = trainerService.save(trainer);
 
-        assertNotNull(result);
+        assertNotNull(result.getUsername(), "Username should be generated");
+        assertNotNull(result.getPassword(), "Password should be generated");
+        assertEquals(10, result.getPassword().length(), "Password should be 10 characters long");
         assertEquals("Dilnur", result.getFirstName());
         assertEquals("Aliqulov", result.getLastName());
-        assertEquals("Yoga", result.getSpecialization());
-        verify(trainerDao, times(1)).save(trainer);
+
+        verify(trainerDao, times(1)).findAll();
+        verify(trainerDao, times(1)).save(result);
+    }
+
+    @Test
+    void testSaveTrainer_DuplicateUsername() {
+        Trainer existing = new Trainer();
+        existing.setUsername("Dilnur.Aliqulov");
+
+        when(trainerDao.findAll()).thenReturn(List.of(existing));
+        when(trainerDao.save(any(Trainer.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Trainer newTrainer = new Trainer();
+        newTrainer.setFirstName("Dilnur");
+        newTrainer.setLastName("Aliqulov");
+
+        Trainer result = trainerService.save(newTrainer);
+
+        assertEquals("Dilnur.Aliqulov1", result.getUsername(), "Duplicate username should get numeric suffix");
+        assertNotNull(result.getPassword());
+
+        verify(trainerDao, times(1)).findAll();
+        verify(trainerDao, times(1)).save(result);
+    }
+
+    @Test
+    void testSaveTrainer_KeepsExistingUsernamePassword() {
+        trainer.setUsername("ExistingUser");
+        trainer.setPassword("ExistingPass");
+
+        when(trainerDao.findAll()).thenReturn(List.of());
+        when(trainerDao.save(any(Trainer.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Trainer result = trainerService.save(trainer);
+
+        assertEquals("ExistingUser", result.getUsername());
+        assertEquals("ExistingPass", result.getPassword());
+
+        verify(trainerDao, times(1)).findAll();
+        verify(trainerDao, times(1)).save(result);
     }
 
     @Test
