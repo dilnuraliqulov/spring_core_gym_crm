@@ -1,7 +1,7 @@
 package com.gymcrm.service;
 
-import com.gymcrm.model.Trainee;
 import com.gymcrm.dao.GenericDao;
+import com.gymcrm.model.Trainee;
 import com.gymcrm.service.impl.TraineeServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,16 +33,24 @@ class TraineeServiceImplTest {
         trainee.setId(1L);
         trainee.setFirstName("John");
         trainee.setLastName("Smith");
+        trainee.setUsername("ExistingUser");
+        trainee.setPassword("ExistingPass");
     }
 
     @Test
-    void testSaveTrainee() {
-        when(traineeDao.save(trainee)).thenReturn(trainee);
+    void testSaveTrainee_PersistsEntity() {
+        // Arrange
+        when(traineeDao.save(any(Trainee.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
+        // Act
         Trainee result = traineeService.save(trainee);
 
-        assertNotNull(result);
+        // Assert
+        assertEquals("ExistingUser", result.getUsername());
+        assertEquals("ExistingPass", result.getPassword());
         assertEquals("John", result.getFirstName());
+        assertEquals("Smith", result.getLastName());
+
         verify(traineeDao, times(1)).save(trainee);
     }
 
@@ -54,12 +62,11 @@ class TraineeServiceImplTest {
 
         assertTrue(result.isPresent());
         assertEquals("Smith", result.get().getLastName());
-        verify(traineeDao).findById(1L);
+        verify(traineeDao, times(1)).findById(1L);
     }
 
     @Test
     void testFindAllTrainees() {
-
         Trainee trainee2 = new Trainee();
         trainee2.setId(2L);
         trainee2.setFirstName("Alice");
@@ -69,6 +76,7 @@ class TraineeServiceImplTest {
         when(traineeDao.findAll()).thenReturn(trainees);
 
         List<Trainee> result = traineeService.findAll();
+
         assertNotNull(result);
         assertEquals(2, result.size());
         assertEquals("John", result.get(0).getFirstName());
@@ -77,10 +85,9 @@ class TraineeServiceImplTest {
         verify(traineeDao, times(1)).findAll();
     }
 
-
     @Test
     void testDeleteTraineeById() {
         traineeService.deleteById(1L);
-        verify(traineeDao).deleteById(1L);
+        verify(traineeDao, times(1)).deleteById(1L);
     }
 }

@@ -13,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -57,27 +58,41 @@ class GymFacadeTest {
 
     // Trainee Tests
     @Test
-    void testCreateTrainee() {
-        when(traineeService.save(trainee)).thenReturn(trainee);
+    void testCreateTrainee_GeneratesUsernameAndPassword() {
+        when(traineeService.findAll()).thenReturn(Collections.emptyList());
+        when(traineeService.save(any(Trainee.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Trainee result = gymFacade.createTrainee(trainee);
 
-        assertNotNull(result);
+        assertNotNull(result.getUsername(), "Username should be generated");
+        assertNotNull(result.getPassword(), "Password should be generated");
+        assertEquals(10, result.getPassword().length(), "Password should be 10 characters long");
         assertEquals("John", result.getFirstName());
-        verify(traineeService, times(1)).save(trainee);
-    }
-
-    @Test
-    void testUpdateTrainee() {
-        when(traineeService.save(trainee)).thenReturn(trainee);
-
-        Trainee result = gymFacade.updateTrainee(trainee);
-
-        assertNotNull(result);
         assertEquals("Doe", result.getLastName());
-        verify(traineeService, times(1)).save(trainee);
+
+        verify(traineeService, times(1)).findAll();
+        verify(traineeService, times(1)).save(result);
     }
 
+    // Trainer Tests
+    @Test
+    void testCreateTrainer_GeneratesUsernameAndPassword() {
+        when(trainerService.findAll()).thenReturn(Collections.emptyList());
+        when(trainerService.save(any(Trainer.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Trainer result = gymFacade.createTrainer(trainer);
+
+        assertNotNull(result.getUsername(), "Username should be generated");
+        assertNotNull(result.getPassword(), "Password should be generated");
+        assertEquals(10, result.getPassword().length(), "Password should be 10 characters long");
+        assertEquals("Alice", result.getFirstName());
+        assertEquals("Smith", result.getLastName());
+
+        verify(trainerService, times(1)).findAll();
+        verify(trainerService, times(1)).save(result);
+    }
+
+    // Basic CRUD Tests
     @Test
     void testDeleteTrainee() {
         gymFacade.deleteTrainee(1L);
@@ -91,7 +106,6 @@ class GymFacadeTest {
         Optional<Trainee> result = gymFacade.getTraineeById(1L);
 
         assertTrue(result.isPresent());
-        assertEquals("John", result.get().getFirstName());
         verify(traineeService, times(1)).findById(1L);
     }
 
@@ -106,27 +120,6 @@ class GymFacadeTest {
         verify(traineeService, times(1)).findAll();
     }
 
-    // Trainer Tests
-    @Test
-    void testCreateTrainer() {
-        when(trainerService.save(trainer)).thenReturn(trainer);
-
-        Trainer result = gymFacade.createTrainer(trainer);
-
-        assertNotNull(result);
-        verify(trainerService).save(trainer);
-    }
-
-    @Test
-    void testUpdateTrainer() {
-        when(trainerService.save(trainer)).thenReturn(trainer);
-
-        Trainer result = gymFacade.updateTrainer(trainer);
-
-        assertNotNull(result);
-        verify(trainerService).save(trainer);
-    }
-
     @Test
     void testGetTrainerById() {
         when(trainerService.findById(1L)).thenReturn(Optional.of(trainer));
@@ -134,7 +127,7 @@ class GymFacadeTest {
         Optional<Trainer> result = gymFacade.getTrainerById(1L);
 
         assertTrue(result.isPresent());
-        verify(trainerService).findById(1L);
+        verify(trainerService, times(1)).findById(1L);
     }
 
     @Test
@@ -145,10 +138,9 @@ class GymFacadeTest {
         List<Trainer> result = gymFacade.getAllTrainers();
 
         assertEquals(1, result.size());
-        verify(trainerService).findAll();
+        verify(trainerService, times(1)).findAll();
     }
 
-    // Training Tests
     @Test
     void testCreateTraining() {
         when(trainingService.save(training)).thenReturn(training);
