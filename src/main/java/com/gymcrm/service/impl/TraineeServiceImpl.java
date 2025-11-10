@@ -3,12 +3,15 @@ package com.gymcrm.service.impl;
 import com.gymcrm.dao.GenericDao;
 import com.gymcrm.model.Trainee;
 import com.gymcrm.service.TraineeService;
+import com.gymcrm.util.UsernamePasswordGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -17,11 +20,11 @@ public class TraineeServiceImpl implements TraineeService {
 
     private final GenericDao<Trainee> traineeDao;
 
-    @Override
-    public Trainee save(Trainee trainee) {
-        log.debug("Service: saving trainee {}", trainee);
-        return traineeDao.save(trainee);
-    }
+  @Override
+   public Trainee save(Trainee trainee) {
+       log.debug("Service:saving trainee {}", trainee);
+       return traineeDao.save(trainee);
+   }
 
     @Override
     public Optional<Trainee> findById(Long id) {

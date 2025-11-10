@@ -34,18 +34,22 @@ class TrainerServiceImplTest {
         trainer.setFirstName("Dilnur");
         trainer.setLastName("Aliqulov");
         trainer.setSpecialization("Yoga");
+        trainer.setUsername("ExistingUser");
+        trainer.setPassword("ExistingPass");
     }
 
     @Test
-    void testSaveTrainer() {
-        when(trainerDao.save(trainer)).thenReturn(trainer);
+    void testSaveTrainer_PersistsEntity() {
+        when(trainerDao.save(any(Trainer.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Trainer result = trainerService.save(trainer);
 
-        assertNotNull(result);
+        assertEquals("ExistingUser", result.getUsername());
+        assertEquals("ExistingPass", result.getPassword());
         assertEquals("Dilnur", result.getFirstName());
         assertEquals("Aliqulov", result.getLastName());
         assertEquals("Yoga", result.getSpecialization());
+
         verify(trainerDao, times(1)).save(trainer);
     }
 
@@ -58,7 +62,7 @@ class TrainerServiceImplTest {
         assertTrue(result.isPresent());
         assertEquals("Aliqulov", result.get().getLastName());
         assertEquals("Yoga", result.get().getSpecialization());
-        verify(trainerDao).findById(1L);
+        verify(trainerDao, times(1)).findById(1L);
     }
 
     @Test
@@ -70,6 +74,7 @@ class TrainerServiceImplTest {
 
         assertEquals(1, result.size());
         assertEquals("Dilnur", result.get(0).getFirstName());
-        verify(trainerDao).findAll();
+        assertEquals("Aliqulov", result.get(0).getLastName());
+        verify(trainerDao, times(1)).findAll();
     }
 }
