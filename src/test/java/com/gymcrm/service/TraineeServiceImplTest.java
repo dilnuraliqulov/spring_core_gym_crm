@@ -1,7 +1,7 @@
 package com.gymcrm.service;
 
-import com.gymcrm.model.Trainee;
 import com.gymcrm.dao.GenericDao;
+import com.gymcrm.model.Trainee;
 import com.gymcrm.service.impl.TraineeServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,7 +10,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,65 +33,25 @@ class TraineeServiceImplTest {
         trainee.setId(1L);
         trainee.setFirstName("John");
         trainee.setLastName("Smith");
+        trainee.setUsername("ExistingUser");
+        trainee.setPassword("ExistingPass");
     }
 
-
     @Test
-    void testSaveTrainee_GeneratesUsernameAndPassword() {
+    void testSaveTrainee_PersistsEntity() {
         // Arrange
-        when(traineeDao.findAll()).thenReturn(Collections.emptyList());
         when(traineeDao.save(any(Trainee.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
+        // Act
         Trainee result = traineeService.save(trainee);
 
-        assertNotNull(result.getUsername(), "Username should be generated");
-        assertNotNull(result.getPassword(), "Password should be generated");
-        assertEquals(10, result.getPassword().length(), "Password should be 10 characters long");
+        // Assert
+        assertEquals("ExistingUser", result.getUsername());
+        assertEquals("ExistingPass", result.getPassword());
         assertEquals("John", result.getFirstName());
         assertEquals("Smith", result.getLastName());
 
-        verify(traineeDao, times(1)).findAll();
-        verify(traineeDao, times(1)).save(result);
-    }
-
-    @Test
-    void testSaveTrainee_DuplicateUsername() {
-        // Arrange: existing trainee with same name
-        Trainee existing = new Trainee();
-        existing.setUsername("John.Smith");
-
-        when(traineeDao.findAll()).thenReturn(List.of(existing));
-        when(traineeDao.save(any(Trainee.class))).thenAnswer(invocation -> invocation.getArgument(0));
-
-        Trainee newTrainee = new Trainee();
-        newTrainee.setFirstName("John");
-        newTrainee.setLastName("Smith");
-
-        Trainee result = traineeService.save(newTrainee);
-
-        assertEquals("John.Smith1", result.getUsername(), "Duplicate username should get numeric suffix");
-        assertNotNull(result.getPassword());
-
-        verify(traineeDao, times(1)).findAll();
-        verify(traineeDao, times(1)).save(result);
-    }
-
-    @Test
-    void testSaveTrainee_KeepsExistingUsernamePassword() {
-        // Arrange: trainee already has username/password
-        trainee.setUsername("ExistingUser");
-        trainee.setPassword("ExistingPass");
-
-        when(traineeDao.findAll()).thenReturn(Collections.emptyList());
-        when(traineeDao.save(any(Trainee.class))).thenAnswer(invocation -> invocation.getArgument(0));
-
-        Trainee result = traineeService.save(trainee);
-
-        assertEquals("ExistingUser", result.getUsername());
-        assertEquals("ExistingPass", result.getPassword());
-
-        verify(traineeDao, times(1)).findAll();
-        verify(traineeDao, times(1)).save(result);
+        verify(traineeDao, times(1)).save(trainee);
     }
 
     @Test
@@ -103,12 +62,11 @@ class TraineeServiceImplTest {
 
         assertTrue(result.isPresent());
         assertEquals("Smith", result.get().getLastName());
-        verify(traineeDao).findById(1L);
+        verify(traineeDao, times(1)).findById(1L);
     }
 
     @Test
     void testFindAllTrainees() {
-
         Trainee trainee2 = new Trainee();
         trainee2.setId(2L);
         trainee2.setFirstName("Alice");
@@ -118,6 +76,7 @@ class TraineeServiceImplTest {
         when(traineeDao.findAll()).thenReturn(trainees);
 
         List<Trainee> result = traineeService.findAll();
+
         assertNotNull(result);
         assertEquals(2, result.size());
         assertEquals("John", result.get(0).getFirstName());
@@ -126,10 +85,9 @@ class TraineeServiceImplTest {
         verify(traineeDao, times(1)).findAll();
     }
 
-
     @Test
     void testDeleteTraineeById() {
         traineeService.deleteById(1L);
-        verify(traineeDao).deleteById(1L);
+        verify(traineeDao, times(1)).deleteById(1L);
     }
 }

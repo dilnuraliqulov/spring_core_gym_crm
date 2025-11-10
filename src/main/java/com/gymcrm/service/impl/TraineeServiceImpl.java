@@ -20,36 +20,11 @@ public class TraineeServiceImpl implements TraineeService {
 
     private final GenericDao<Trainee> traineeDao;
 
-    @Override
-    public Trainee save(Trainee trainee) {
-        // Collect existing usernames
-        Set<String> existingUsernames = traineeDao.findAll().stream()
-                .map(Trainee::getUsername)
-                .collect(Collectors.toSet());
-
-        // Generate username if missing
-        if (trainee.getUsername() == null || trainee.getUsername().isBlank()) {
-            String generatedUsername = UsernamePasswordGenerator.generateUsername(
-                    trainee.getFirstName(),
-                    trainee.getLastName(),
-                    existingUsernames
-            );
-            trainee.setUsername(generatedUsername);
-            log.debug("Generated username for trainee {} {}: {}",
-                    trainee.getFirstName(), trainee.getLastName(), generatedUsername);
-        }
-
-        // Generate password if missing
-        if (trainee.getPassword() == null || trainee.getPassword().isBlank()) {
-            String generatedPassword = UsernamePasswordGenerator.generatePassword();
-            trainee.setPassword(generatedPassword);
-            log.debug("Generated password for trainee {}: {}", trainee.getUsername(), generatedPassword);
-        }
-
-        log.debug("Saving trainee: {}", trainee);
-        return traineeDao.save(trainee);
-    }
-
+   @Override
+   public Trainee save(Trainee trainee) {
+       log.debug("Service:saving trainee {}", trainee);
+       return traineeDao.save(trainee);
+   }
 
     @Override
     public Optional<Trainee> findById(Long id) {

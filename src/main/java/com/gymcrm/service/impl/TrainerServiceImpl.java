@@ -21,35 +21,10 @@ public class TrainerServiceImpl implements TrainerService {
     private final GenericDao<Trainer> trainerDao;
 
     @Override
-    public Trainer save(Trainer trainer) {
-        // Collect existing usernames
-        Set<String> existingUsernames = trainerDao.findAll().stream()
-                .map(Trainer::getUsername)
-                .collect(Collectors.toSet());
-
-        // Generate username if missing
-        if (trainer.getUsername() == null || trainer.getUsername().isBlank()) {
-            String generatedUsername = UsernamePasswordGenerator.generateUsername(
-                    trainer.getFirstName(),
-                    trainer.getLastName(),
-                    existingUsernames
-            );
-            trainer.setUsername(generatedUsername);
-            log.debug("Generated username for trainer {} {}: {}",
-                    trainer.getFirstName(), trainer.getLastName(), generatedUsername);
-        }
-
-        // Generate password if missing
-        if (trainer.getPassword() == null || trainer.getPassword().isBlank()) {
-            String generatedPassword = UsernamePasswordGenerator.generatePassword();
-            trainer.setPassword(generatedPassword);
-            log.debug("Generated password for trainer {}: {}", trainer.getUsername(), generatedPassword);
-        }
-
-        log.debug("Saving trainer: {}", trainer);
+    public Trainer save (Trainer trainer) {
+        log.debug("Service:saving trainer {}", trainer);
         return trainerDao.save(trainer);
     }
-
     @Override
     public Optional<Trainer> findById(Long id) {
         log.info("Service: fetching trainer with id {}", id);

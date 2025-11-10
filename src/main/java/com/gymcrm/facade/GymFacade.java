@@ -6,12 +6,15 @@ import com.gymcrm.model.Training;
 import com.gymcrm.service.TraineeService;
 import com.gymcrm.service.TrainerService;
 import com.gymcrm.service.TrainingService;
+import com.gymcrm.util.UsernamePasswordGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -23,9 +26,32 @@ public class GymFacade {
     private final TrainingService trainingService;
 
     //Trainee operations
-
     public Trainee createTrainee(Trainee trainee) {
         log.info("Creating trainee: {}", trainee);
+
+        // Collect existing usernames
+        Set<String> existingUsernames = traineeService.findAll().stream()
+                .map(Trainee::getUsername)
+                .collect(Collectors.toSet());
+
+        // Generate username if missing
+        if (trainee.getUsername() == null || trainee.getUsername().isBlank()) {
+            String username = UsernamePasswordGenerator.generateUsername(
+                    trainee.getFirstName(),
+                    trainee.getLastName(),
+                    existingUsernames
+            );
+            trainee.setUsername(username);
+            log.debug("Generated username for trainee: {}", username);
+        }
+
+        // Generate password if missing
+        if (trainee.getPassword() == null || trainee.getPassword().isBlank()) {
+            char[] password = UsernamePasswordGenerator.generatePassword(10);
+            trainee.setPassword(new String(password));
+            log.debug("Generated password for trainee {}: {}", trainee.getUsername(), trainee.getPassword());
+
+        }
         return traineeService.save(trainee);
     }
 
@@ -50,9 +76,30 @@ public class GymFacade {
     }
 
     //Trainer operations
-
     public Trainer createTrainer(Trainer trainer) {
         log.info("Creating trainer: {}", trainer);
+
+        Set<String> existingUsernames = trainerService.findAll().stream()
+                .map(Trainer::getUsername)
+                .collect(Collectors.toSet());
+
+        if (trainer.getUsername() == null || trainer.getUsername().isBlank()) {
+            String username = UsernamePasswordGenerator.generateUsername(
+                    trainer.getFirstName(),
+                    trainer.getLastName(),
+                    existingUsernames
+            );
+            trainer.setUsername(username);
+            log.debug("Generated username for trainer: {}", username);
+        }
+
+        if (trainer.getPassword() == null || trainer.getPassword().isBlank()) {
+            char[] password = UsernamePasswordGenerator.generatePassword(10);
+            trainer.setPassword(new String(password));
+            log.debug("Generated password for trainer {}: {}", trainer.getUsername(), trainer.getPassword());
+
+        }
+
         return trainerService.save(trainer);
     }
 
