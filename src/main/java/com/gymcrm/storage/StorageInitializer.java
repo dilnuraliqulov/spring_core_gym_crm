@@ -5,6 +5,7 @@ import com.gymcrm.model.IdAccessor;
 import jakarta.annotation.PostConstruct;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
@@ -15,16 +16,12 @@ import java.util.List;
 @Component
 public class StorageInitializer {
 
-    @Value("${data.trainers.path}")
     private Resource trainersResource;
 
-    @Value("${data.trainees.path}")
     private Resource traineesResource;
 
-    @Value("${data.trainings.path}")
     private Resource trainingsResource;
 
-    @Value("${data.trainingtypes.path}")
     private Resource trainingTypesResource;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -34,15 +31,27 @@ public class StorageInitializer {
     private final TrainingStorage trainingStorage;
     private final TrainingTypeStorage trainingTypeStorage;
 
+
+
     public StorageInitializer(TrainerStorage trainerStorage,
                               TraineeStorage traineeStorage,
                               TrainingStorage trainingStorage,
-                              TrainingTypeStorage trainingTypeStorage) {
+                              TrainingTypeStorage trainingTypeStorage,
+                              @Value("${data.trainers.path}") Resource trainersResource,
+                              @Value("${data.trainees.path}") Resource traineesResource,
+                              @Value("${data.trainings.path}") Resource trainingsResource,
+                              @Value("${data.trainingtypes.path}") Resource trainingTypesResource) {
         this.trainerStorage = trainerStorage;
         this.traineeStorage = traineeStorage;
         this.trainingStorage = trainingStorage;
         this.trainingTypeStorage = trainingTypeStorage;
+        this.trainersResource = trainersResource;
+        this.traineesResource = traineesResource;
+        this.trainingsResource = trainingsResource;
+        this.trainingTypesResource = trainingTypesResource;
     }
+
+
 
     @PostConstruct
     @SneakyThrows

@@ -53,6 +53,16 @@ class StorageInitializerTest {
     @BeforeEach
     void setUp() {
         objectMapper = new ObjectMapper();
+        storageInitializer = new StorageInitializer(
+                trainerStorage,
+                traineeStorage,
+                trainingStorage,
+                trainingTypeStorage,
+                trainersResource,
+                traineesResource,
+                trainingsResource,
+                trainingTypesResource
+        );
     }
 
     @Test
@@ -60,8 +70,8 @@ class StorageInitializerTest {
         // Prepare JSON data for each resource
         String trainerJson = "[{\"id\":1,\"firstName\":\"Alice\"}]";
         String traineeJson = "[{\"id\":1,\"firstName\":\"John\"}]";
-        String trainingJson = "[{\"id\":1,\"name\":\"Yoga\"}]";
-        String trainingTypeJson = "[{\"id\":1,\"name\":\"Cardio\"}]";
+        String trainingJson = "[{\"id\":1,\"trainingName\":\"Yoga\"}]";
+        String trainingTypeJson = "[{\"id\":1,\"trainingTypeName\":\"Cardio\"}]";
 
         when(trainersResource.getInputStream())
                 .thenReturn(new ByteArrayInputStream(trainerJson.getBytes(StandardCharsets.UTF_8)));
@@ -82,9 +92,9 @@ class StorageInitializerTest {
         storageInitializer.init();
 
         // Verify that data was put into storages
-        verify(trainerStorage).put(1L, any(Trainer.class));
-        verify(traineeStorage).put(1L, any(Trainee.class));
-        verify(trainingStorage).put(1L, any(Training.class));
-        verify(trainingTypeStorage).put(1L, any(TrainingType.class));
+        verify(trainerStorage).put(eq(1L), any(Trainer.class));
+        verify(traineeStorage).put(eq(1L), any(Trainee.class));
+        verify(trainingStorage).put(eq(1L), any(Training.class));
+        verify(trainingTypeStorage).put(eq(1L), any(TrainingType.class));
     }
 }
