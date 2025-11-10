@@ -20,7 +20,7 @@ public class TraineeServiceImpl implements TraineeService {
 
     private final GenericDao<Trainee> traineeDao;
 
-   @Override
+  @Override
    public Trainee save(Trainee trainee) {
        log.debug("Service:saving trainee {}", trainee);
        return traineeDao.save(trainee);
@@ -28,19 +28,19 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Override
     public Optional<Trainee> findById(Long id) {
-        log.info("Service: fetching trainee with id {}", id);
+        log.debug("Service: fetching trainee with id {}", id);
         return traineeDao.findById(id);
     }
 
     @Override
     public List<Trainee> findAll() {
-        log.info("Service: fetching all trainees");
+        log.debug("Service: fetching all trainees");
         return traineeDao.findAll();
     }
 
     @Override
     public void deleteById(Long id) {
-        log.info("Service: deleting trainee with id {}", id);
+        log.debug("Service: deleting trainee with id {}", id);
         traineeDao.deleteById(id);
     }
 }
