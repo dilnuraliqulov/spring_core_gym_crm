@@ -22,6 +22,6 @@ public class Main {
         // Example usage
         log.debug("All trainees: {}", facade.getAllTrainees());
         log.debug("All trainers: {}", facade.getAllTrainers());
-        log.debug("All trainings: {}", facade.getAllTrainings());
+
     }
 }
