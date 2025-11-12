@@ -1,6 +1,8 @@
 package com.gymcrm.storage;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.gymcrm.model.IdAccessor;
 import jakarta.annotation.PostConstruct;
 import lombok.SneakyThrows;
@@ -24,7 +26,7 @@ public class StorageInitializer {
 
     private Resource trainingTypesResource;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper;
 
     private final TrainerStorage trainerStorage;
     private final TraineeStorage traineeStorage;
@@ -49,7 +51,12 @@ public class StorageInitializer {
         this.traineesResource = traineesResource;
         this.trainingsResource = trainingsResource;
         this.trainingTypesResource = trainingTypesResource;
+
+        this.objectMapper = new ObjectMapper();
+        this.objectMapper.registerModule(new JavaTimeModule());
+        this.objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
+
 
 
 
