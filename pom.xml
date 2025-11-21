@@ -130,6 +130,15 @@
             <version>42.7.3</version>
         </dependency>
 
+        <!-- Flyway -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+            <version>11.17.0</version>
+        </dependency>
+
+
+
     </dependencies>
 
     <build>
@@ -178,6 +187,23 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <!-- Flyway plugin -->
+            <plugin>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
+                <version>9.16.1</version>
+                <configuration>
+                    <url>jdbc:postgresql://localhost:5432/gymcrmdb</url>
+                    <user>postgres</user>
+                    <password>myadmin1234</password>
+                    <locations>
+                        <location>classpath:db/migration</location>
+                    </locations>
+                </configuration>
+            </plugin>
+
+
 
         </plugins>
     </build>
