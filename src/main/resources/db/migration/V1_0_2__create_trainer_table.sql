@@ -1,6 +1,6 @@
-CREATE TABLE trainees (
+-- DDL
+CREATE TABLE trainers (
                           id SERIAL PRIMARY KEY,
-                          date_of_birth DATE,
-                          address VARCHAR(255),
+                          specialization VARCHAR(100),
                           user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE
 );

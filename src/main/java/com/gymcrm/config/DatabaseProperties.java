@@ -20,4 +20,5 @@ public class DatabaseProperties {
     @Value("${database.password}")
     private String password;
 
+
 }

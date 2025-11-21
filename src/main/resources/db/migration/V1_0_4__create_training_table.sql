@@ -1,3 +1,4 @@
+-- DDL
 CREATE TABLE training (
                           id SERIAL PRIMARY KEY,
                           trainee_id INT NOT NULL REFERENCES trainees(id) ON DELETE CASCADE,
