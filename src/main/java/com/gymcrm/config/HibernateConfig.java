@@ -23,11 +23,12 @@ public class HibernateConfig {
     @Value("${hibernate.dialect}")
     private String dialect;
 
-    @Value("${hibernate.hbm2ddl.auto}")
-    private String hbm2ddl;
-
     @Value("${hibernate.show_sql}")
     private String showSql;
+
+    @Value("${hibernate.packages-to-scan}")
+    private String packagesToScan;
+
 
     @Bean
     public DataSource dataSource() {
@@ -44,14 +45,13 @@ public class HibernateConfig {
     public LocalSessionFactoryBean sessionFactory() {
         LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
         sessionFactory.setDataSource(dataSource());
-        sessionFactory.setPackagesToScan("com.gymcrm.model");
+        sessionFactory.setPackagesToScan(packagesToScan);
 
         Properties props = new Properties();
         props.setProperty("hibernate.dialect", dialect);
         props.setProperty("hibernate.show_sql", showSql);
-        props.setProperty("hibernate.hbm2ddl.auto", hbm2ddl);
-
         sessionFactory.setHibernateProperties(props);
+
         return sessionFactory;
     }
 
