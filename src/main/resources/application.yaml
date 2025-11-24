@@ -17,11 +17,17 @@ database:
   username: ${DB_USER}
   password: ${DB_PASS}
 
+
 #Hibernate configuration
 hibernate:
   dialect: org.hibernate.dialect.PostgreSQLDialect
-  hbm2ddl.auto: update
   show_sql: true
+  packages-to-scan: com.gymcrm.model
+
+#Flyway
+flyway:
+  locations: classpath:db/migration
+
 
 
 
