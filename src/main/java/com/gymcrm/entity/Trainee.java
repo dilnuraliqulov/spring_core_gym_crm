@@ -1,10 +1,12 @@
 package com.gymcrm.entity;
 
+import com.gymcrm.model.Training;
 import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -30,5 +32,9 @@ public class Trainee {
     @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "user_id",referencedColumnName = "id")
     private User user;
+
+    @OneToMany(mappedBy = "trainee", cascade = CascadeType.ALL)
+    @ToString.Exclude
+    private List<Training> trainings;
 
 }
