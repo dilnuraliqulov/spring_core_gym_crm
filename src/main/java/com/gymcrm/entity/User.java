@@ -6,6 +6,7 @@ import com.gymcrm.converter.CharToStringConverter;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.io.Serializable;
@@ -43,6 +44,7 @@ public class User implements Serializable {
     @Column(name = "password",nullable = false)
     @Convert(converter =  CharToStringConverter.class)
     @ToString.Exclude
+    @Size(min = 8)
     @NotNull(message = "Password can not be null")
     private char[] password;
 
