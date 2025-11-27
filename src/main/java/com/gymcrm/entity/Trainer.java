@@ -1,6 +1,7 @@
 package com.gymcrm.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.List;
@@ -21,8 +22,9 @@ public class Trainer {
     private Long id;
 
     @JoinColumn(name = "user_id",referencedColumnName = "id")
-    @OneToOne(optional = true ,cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL,optional = false)
     @ToString.Exclude
+    @NotNull(message = "User can not be null")
     private User user;
 
     @OneToMany(mappedBy = "trainer", cascade = CascadeType.ALL)
