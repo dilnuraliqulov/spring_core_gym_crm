@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.util.List;
@@ -25,6 +26,7 @@ public class TrainingType {
     private Long id;
 
     @Column(name = "training_type_name",unique = true, nullable = false)
+    @NotBlank(message = "Training type name cannot be blank")
     private String trainingTypeName;
 
     @OneToMany(mappedBy="trainingType",cascade = CascadeType.ALL)
