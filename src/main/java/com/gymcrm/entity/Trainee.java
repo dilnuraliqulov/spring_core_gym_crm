@@ -37,4 +37,13 @@ public class Trainee {
     @ToString.Exclude
     private List<Training> trainings;
 
+    @ManyToMany
+    @JoinTable(
+            name = "trainee_trainers",
+            joinColumns = @JoinColumn(name = "trainee_id"),
+            inverseJoinColumns = @JoinColumn(name = "trainer_id")
+    )
+    @ToString.Exclude
+    private List<Trainer> trainers;
+
 }

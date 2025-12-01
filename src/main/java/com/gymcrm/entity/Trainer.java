@@ -29,6 +29,10 @@ public class Trainer {
     @ToString.Exclude
     private List<Training> trainings;
 
+    @ManyToMany(mappedBy = "trainers")
+    @ToString.Exclude
+    private List<Trainee> trainees;
+
 
 
 }
