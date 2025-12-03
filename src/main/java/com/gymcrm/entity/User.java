@@ -35,7 +35,6 @@ public class User implements Serializable {
     @NotBlank(message = "Lastname can not be blank")
     private String lastName;
 
-    @Setter(AccessLevel.NONE)
     @Column(name = "username",unique = true,nullable = false)
     @NotBlank(message = "Username can not be blank ")
     private String username;

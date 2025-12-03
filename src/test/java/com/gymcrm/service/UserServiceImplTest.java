@@ -1,0 +1,64 @@
+package com.gymcrm.service;
+
+
+import com.gymcrm.entity.User;
+import com.gymcrm.repository.UserRepository;
+import com.gymcrm.service.impl.UserServiceImpl;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+import static org.mockito.Mockito.when;
+
+@ExtendWith(MockitoExtension.class)
+public class UserServiceImplTest {
+
+    @Mock
+    private UserRepository userRepository;
+
+    private UserService userService;
+
+    @BeforeEach
+    public void setUp() {
+        userService = new UserServiceImpl(userRepository);
+    }
+
+    @Test
+    void testFindByUsername_userExists() {
+        User user = new User();
+        user.setId(1L);
+        user.setUsername("test");
+
+        when(userRepository.findByUsername("test"))
+                .thenReturn(Optional.of(user));
+
+        Optional<User>result = userService.findByUsername("test");
+
+        assertTrue(result.isPresent());
+        assertEquals("test",result.get().getUsername());
+        verify(userRepository,times(1)).findByUsername("test");
+
+    }
+
+    @Test
+    void testFindByUsername_UserNotFound() {
+        when(userRepository.findByUsername("unknown"))
+                .thenReturn(Optional.empty());
+
+        RuntimeException exception = assertThrows(
+                RuntimeException.class,
+                () -> userService.findByUsername("unknown")
+        );
+
+        assertEquals("User not found", exception.getMessage());
+        verify(userRepository, times(1)).findByUsername("unknown");
+    }
+
+}

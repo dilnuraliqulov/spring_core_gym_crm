@@ -3,9 +3,12 @@ package com.gymcrm.service;
 import com.gymcrm.entity.User;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public interface UserService {
-    User findByUserName(String username);
+
+    Optional<User> findByUsername(String username);
 
     boolean authenticate(String username, char[] password);
 
