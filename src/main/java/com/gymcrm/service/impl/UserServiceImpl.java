@@ -21,7 +21,8 @@ public class UserServiceImpl implements UserService {
     public Optional<User> findByUsername(String username) {
         return Optional.of(
                 userRepository.findByUsername(username)
-                       .orElseThrow(() -> new UserNotFoundException("User not found")));
+                       .orElseThrow(() ->
+                               new UserNotFoundException(("User not found") + username)));
     }
 
     @Override
