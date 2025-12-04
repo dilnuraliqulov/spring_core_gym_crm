@@ -5,8 +5,11 @@ import com.gymcrm.exception.UserNotFoundException;
 import com.gymcrm.repository.UserRepository;
 import com.gymcrm.service.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 
@@ -27,25 +30,22 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean authenticate(String username, char[] password) {
         User user = userRepository.findByUsername(username)
-              .orElseThrow(() -> new UserNotFoundException("User not found"));
+              .orElseThrow(() -> new UserNotFoundException("User not found" + username));
 
+        if (!user.isActive()) {
+            throw new DisabledException("User " + username + " is disabled");
+        }
 
-        return matches(password,user.getPassword());
+        if (!matches(password, user.getPassword())) {
+            throw new BadCredentialsException("Invalid password for username: " + username);
+        }
+
+        return true;
     }
 
     @Override
     public boolean matches(char[] password, char[] hashedPassword) {
-        if (password == null || hashedPassword == null) {
-            return false;
-        }
-        if(password.length != hashedPassword.length)
-            return false;
-        for (int i =0; i < password.length; i++) {
-            if ( password[ i ] != hashedPassword[ i ] ) {
-            return false;
-            }
-        }
-        return true;
+      return Arrays.equals(password, hashedPassword);
     }
 
     @Override

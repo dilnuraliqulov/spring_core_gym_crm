@@ -10,6 +10,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 
 import java.util.Optional;
 
@@ -64,6 +66,7 @@ public class UserServiceImplTest {
         User user = new User();
         user.setUsername("testuser");
         user.setPassword(password);
+        user.setActive(true);
 
         when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(user));
 
@@ -74,20 +77,53 @@ public class UserServiceImplTest {
     }
 
     @Test
+    void testAuthenticate_userNotFound() {
+        when(userRepository.findByUsername("unknown")).thenReturn(Optional.empty());
+
+        UserNotFoundException exception = assertThrows(
+                UserNotFoundException.class,
+                () -> userServiceImpl.authenticate("unknown", new char[]{})
+        );
+
+        assertEquals("User not foundunknown", exception.getMessage());
+    }
+
+    @Test
+    void testAuthenticate_userInactive() {
+        char[] password = {'p','a','s','s','1','2','3','4'};
+        User user = new User();
+        user.setUsername("inactiveUser");
+        user.setPassword(password);
+        user.setActive(false);
+
+        when(userRepository.findByUsername("inactiveUser")).thenReturn(Optional.of(user));
+
+        DisabledException exception = assertThrows(
+                DisabledException.class,
+                () -> userServiceImpl.authenticate("inactiveUser", password)
+        );
+
+        assertEquals("User inactiveUser is disabled", exception.getMessage());
+    }
+
+    @Test
     void testAuthenticate_wrongPassword() {
         char[] correctPassword = {'p','a','s','s','1','2','3','4'};
-        char[] wrongPassword = {'w','r','o','n','g'};
+        char[] wrongPassword = {'w','r','o','n','g','1','2','3','4'};
 
         User user = new User();
         user.setUsername("testuser");
         user.setPassword(correctPassword);
+        user.setActive(true);
 
         when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(user));
 
-        boolean result = userServiceImpl.authenticate("testuser", wrongPassword);
+        BadCredentialsException exception = assertThrows(
+                BadCredentialsException.class,
+                () -> userServiceImpl.authenticate("testuser", wrongPassword)
+        );
 
-        assertFalse(result);
-        verify(userRepository, times(1)).findByUsername("testuser");
+        assertEquals("Invalid password for username: testuser", exception.getMessage());
     }
 
     @Test
@@ -103,7 +139,6 @@ public class UserServiceImplTest {
         char[] b = {'1','2','3','5'};
         assertFalse(userServiceImpl.matches(a, b));
     }
-
 
 
 }
