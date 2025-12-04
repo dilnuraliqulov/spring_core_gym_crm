@@ -24,7 +24,6 @@ public class UserServiceImplTest {
     @Mock
     private UserRepository userRepository;
 
-    private UserService userService;
 
     @InjectMocks
     private UserServiceImpl userServiceImpl;
@@ -38,7 +37,7 @@ public class UserServiceImplTest {
         when(userRepository.findByUsername("test"))
                 .thenReturn(Optional.of(user));
 
-        Optional<User>result = userService.findByUsername("test");
+        Optional<User>result = userServiceImpl.findByUsername("test");
 
         assertTrue(result.isPresent());
         assertEquals("test",result.get().getUsername());
@@ -53,7 +52,7 @@ public class UserServiceImplTest {
 
         UserNotFoundException exception = assertThrows(
                 UserNotFoundException.class,
-                () -> userService.findByUsername("unknown")
+                () -> userServiceImpl.findByUsername("unknown")
         );
 
         assertEquals("User not found", exception.getMessage());
