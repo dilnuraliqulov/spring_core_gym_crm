@@ -55,7 +55,7 @@ public class UserServiceImplTest {
                 () -> userServiceImpl.findByUsername("unknown")
         );
 
-        assertEquals("User not found", exception.getMessage());
+        assertEquals("User not found: unknown", exception.getMessage());
         verify(userRepository, times(1)).findByUsername("unknown");
     }
 

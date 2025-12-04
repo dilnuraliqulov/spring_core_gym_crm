@@ -22,7 +22,7 @@ public class UserServiceImpl implements UserService {
         return Optional.of(
                 userRepository.findByUsername(username)
                        .orElseThrow(() ->
-                               new UserNotFoundException(("User not found") + username)));
+                               new UserNotFoundException("User not found: " + username)));
     }
 
     @Override
