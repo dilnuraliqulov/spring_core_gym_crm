@@ -1,6 +1,7 @@
 package com.gymcrm.service.impl;
 
 import com.gymcrm.entity.User;
+import com.gymcrm.exception.UserNotFoundException;
 import com.gymcrm.repository.UserRepository;
 import com.gymcrm.service.UserService;
 import lombok.AllArgsConstructor;
@@ -19,7 +20,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<User> findByUsername(String username) {
         return Optional.ofNullable(userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found")));
+                .orElseThrow(() -> new UserNotFoundException("User not found")));
     }
 
     @Override

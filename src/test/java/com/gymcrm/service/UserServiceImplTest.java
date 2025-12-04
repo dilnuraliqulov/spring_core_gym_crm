@@ -2,11 +2,12 @@ package com.gymcrm.service;
 
 
 import com.gymcrm.entity.User;
+import com.gymcrm.exception.UserNotFoundException;
 import com.gymcrm.repository.UserRepository;
 import com.gymcrm.service.impl.UserServiceImpl;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -25,10 +26,8 @@ public class UserServiceImplTest {
 
     private UserService userService;
 
-    @BeforeEach
-    public void setUp() {
-        userService = new UserServiceImpl(userRepository);
-    }
+    @InjectMocks
+    private UserServiceImpl userServiceImpl;
 
     @Test
     void testFindByUsername_userExists() {
@@ -52,8 +51,8 @@ public class UserServiceImplTest {
         when(userRepository.findByUsername("unknown"))
                 .thenReturn(Optional.empty());
 
-        RuntimeException exception = assertThrows(
-                RuntimeException.class,
+        UserNotFoundException exception = assertThrows(
+                UserNotFoundException.class,
                 () -> userService.findByUsername("unknown")
         );
 
