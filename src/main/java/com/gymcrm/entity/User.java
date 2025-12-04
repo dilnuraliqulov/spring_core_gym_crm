@@ -39,7 +39,6 @@ public class User implements Serializable {
     @NotBlank(message = "Username can not be blank ")
     private String username;
 
-    @Setter(AccessLevel.NONE)
     @Column(name = "password",nullable = false)
     @Convert(converter =  CharToStringConverter.class)
     @ToString.Exclude

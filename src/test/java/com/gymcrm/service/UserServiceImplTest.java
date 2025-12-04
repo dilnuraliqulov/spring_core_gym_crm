@@ -58,5 +58,52 @@ public class UserServiceImplTest {
         assertEquals("User not found", exception.getMessage());
         verify(userRepository, times(1)).findByUsername("unknown");
     }
+    @Test
+    void testAuthenticate_success() {
+        char[] password = {'p','a','s','s','1','2','3','4'};
+        User user = new User();
+        user.setUsername("testuser");
+        user.setPassword(password);
+
+        when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(user));
+
+        boolean result = userServiceImpl.authenticate("testuser", password);
+
+        assertTrue(result);
+        verify(userRepository, times(1)).findByUsername("testuser");
+    }
+
+    @Test
+    void testAuthenticate_wrongPassword() {
+        char[] correctPassword = {'p','a','s','s','1','2','3','4'};
+        char[] wrongPassword = {'w','r','o','n','g'};
+
+        User user = new User();
+        user.setUsername("testuser");
+        user.setPassword(correctPassword);
+
+        when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(user));
+
+        boolean result = userServiceImpl.authenticate("testuser", wrongPassword);
+
+        assertFalse(result);
+        verify(userRepository, times(1)).findByUsername("testuser");
+    }
+
+    @Test
+    void testMatches_true() {
+        char[] a = {'1','2','3','4'};
+        char[] b = {'1','2','3','4'};
+        assertTrue(userServiceImpl.matches(a, b));
+    }
+
+    @Test
+    void testMatches_false() {
+        char[] a = {'1','2','3','4'};
+        char[] b = {'1','2','3','5'};
+        assertFalse(userServiceImpl.matches(a, b));
+    }
+
+
 
 }

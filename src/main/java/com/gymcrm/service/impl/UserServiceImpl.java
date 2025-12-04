@@ -26,12 +26,26 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean authenticate(String username, char[] password) {
-        return false;
+        User user = userRepository.findByUsername(username)
+              .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+
+        return matches(password,user.getPassword());
     }
 
     @Override
     public boolean matches(char[] password, char[] hashedPassword) {
-        return false;
+        if (password == null || hashedPassword == null) {
+            return false;
+        }
+        if(password.length != hashedPassword.length)
+            return false;
+        for (int i =0; i < password.length; i++) {
+            if ( password[ i ] != hashedPassword[ i ] ) {
+            return false;
+            }
+        }
+        return true;
     }
 
     @Override
