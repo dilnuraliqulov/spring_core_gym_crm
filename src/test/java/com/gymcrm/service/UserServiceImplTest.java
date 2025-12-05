@@ -4,7 +4,7 @@ package com.gymcrm.service;
 import com.gymcrm.entity.User;
 import com.gymcrm.exception.UserNotFoundException;
 import com.gymcrm.repository.UserRepository;
-import com.gymcrm.service.impl.UserServiceImpl;
+import com.gymcrm.service.impl.hibernate.UserServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

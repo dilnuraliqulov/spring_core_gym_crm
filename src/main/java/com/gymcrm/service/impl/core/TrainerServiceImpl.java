@@ -1,8 +1,8 @@
-package com.gymcrm.service_spring_core.impl;
+package com.gymcrm.service.impl.core;
 
 import com.gymcrm.dao.GenericDao;
 import com.gymcrm.model.Trainer;
-import com.gymcrm.service_spring_core.TrainerService;
+import com.gymcrm.service.TrainerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Slf4j
-@Service
 @RequiredArgsConstructor
 public class TrainerServiceImpl implements TrainerService {
 

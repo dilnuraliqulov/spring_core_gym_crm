@@ -1,4 +1,4 @@
-package com.gymcrm.service.impl;
+package com.gymcrm.service.impl.hibernate;
 
 import com.gymcrm.entity.User;
 import com.gymcrm.exception.UserNotFoundException;

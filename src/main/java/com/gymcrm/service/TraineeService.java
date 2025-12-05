@@ -1,4 +1,4 @@
-package com.gymcrm.service_spring_core;
+package com.gymcrm.service;
 
 import com.gymcrm.model.Trainee;
 import java.util.List;
