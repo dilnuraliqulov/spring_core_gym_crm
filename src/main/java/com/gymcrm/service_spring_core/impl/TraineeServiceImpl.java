@@ -1,17 +1,14 @@
-package com.gymcrm.service.impl;
+package com.gymcrm.service_spring_core.impl;
 
 import com.gymcrm.dao.GenericDao;
 import com.gymcrm.model.Trainee;
-import com.gymcrm.service.TraineeService;
-import com.gymcrm.util.UsernamePasswordGenerator;
+import com.gymcrm.service_spring_core.TraineeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service

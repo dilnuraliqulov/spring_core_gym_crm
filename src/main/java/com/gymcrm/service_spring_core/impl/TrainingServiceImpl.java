@@ -1,8 +1,8 @@
-package com.gymcrm.service.impl;
+package com.gymcrm.service_spring_core.impl;
 
 import com.gymcrm.dao.GenericDao;
 import com.gymcrm.model.Training;
-import com.gymcrm.service.TrainingService;
+import com.gymcrm.service_spring_core.TrainingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

@@ -1,8 +1,8 @@
-package com.gymcrm.service;
+package com.gymcrm.service_spring_core;
 
 import com.gymcrm.dao.GenericDao;
 import com.gymcrm.model.Trainer;
-import com.gymcrm.service.impl.TrainerServiceImpl;
+import com.gymcrm.service_spring_core.impl.TrainerServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

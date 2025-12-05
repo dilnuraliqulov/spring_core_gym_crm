@@ -1,6 +1,6 @@
-package com.gymcrm.service;
+package com.gymcrm.service_spring_core;
 
-import com.gymcrm.service.impl.TrainingServiceImpl;
+import com.gymcrm.service_spring_core.impl.TrainingServiceImpl;
 import com.gymcrm.dao.GenericDao;
 import com.gymcrm.model.Training;
 import com.gymcrm.model.TrainingType;
