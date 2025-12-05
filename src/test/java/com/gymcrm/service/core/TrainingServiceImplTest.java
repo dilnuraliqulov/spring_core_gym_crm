@@ -1,4 +1,4 @@
-package com.gymcrm.service_spring_core;
+package com.gymcrm.service.core;
 
 import com.gymcrm.service.impl.core.TrainingServiceImpl;
 import com.gymcrm.dao.GenericDao;

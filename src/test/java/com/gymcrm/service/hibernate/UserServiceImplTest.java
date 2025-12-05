@@ -1,4 +1,4 @@
-package com.gymcrm.service;
+package com.gymcrm.service.hibernate;
 
 
 import com.gymcrm.entity.User;
