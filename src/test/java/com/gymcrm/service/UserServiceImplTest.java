@@ -4,14 +4,17 @@ package com.gymcrm.service;
 import com.gymcrm.entity.User;
 import com.gymcrm.exception.UserNotFoundException;
 import com.gymcrm.repository.UserRepository;
+
 import com.gymcrm.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
+
 
 import java.util.Optional;
 

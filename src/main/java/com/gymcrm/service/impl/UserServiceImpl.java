@@ -45,7 +45,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean matches(char[] password, char[] hashedPassword) {
-      return Arrays.equals(password, hashedPassword);
+
+        return Arrays.equals(password, hashedPassword);
     }
 
     @Override
