@@ -1,9 +1,9 @@
-package com.gymcrm.service.core;
+package com.gymcrm.service;
 
 import com.gymcrm.dao.GenericDao;
 import com.gymcrm.model.Trainee;
 
-import com.gymcrm.service.impl.core.TraineeServiceImpl;
+import com.gymcrm.service.impl.TraineeServiceImpl;
 
 
 import org.junit.jupiter.api.BeforeEach;
