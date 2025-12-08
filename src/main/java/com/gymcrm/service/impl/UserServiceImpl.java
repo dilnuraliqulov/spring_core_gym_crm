@@ -7,9 +7,9 @@ import com.gymcrm.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 
@@ -18,63 +18,45 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
 
 
     @Override
     public Optional<User> findByUsername(String username) {
-        return userRepository.findByUsername(username)
-                .or(() -> {
-                    throw new UserNotFoundException("User not found: " + username);
-                });
+        return Optional.of(
+                userRepository.findByUsername(username)
+                       .orElseThrow(() -> new UserNotFoundException("User not found")));
     }
 
     @Override
     public boolean authenticate(String username, char[] password) {
         User user = userRepository.findByUsername(username)
-              .orElseThrow(() -> new UserNotFoundException("User not found: " + username));
+              .orElseThrow(() -> new UserNotFoundException("User not found" + username));
 
         if (!user.isActive()) {
             throw new DisabledException("User " + username + " is disabled");
         }
 
-        if (!passwordEncoder.matches(new String(password), new String(user.getPassword()))) {
+        if (!matches(password, user.getPassword())) {
             throw new BadCredentialsException("Invalid password for username: " + username);
         }
 
         return true;
     }
 
-
     @Override
-    public void changePassword(String username, char[] currentPassword, char[] newPassword) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException("User not found: " + username));
+    public boolean matches(char[] password, char[] hashedPassword) {
 
-        if (!passwordEncoder.matches(new String(currentPassword), new String(user.getPassword()))) {
-            throw new BadCredentialsException("Invalid current password for username: " + username);
-        }
-
-        user.setPassword(passwordEncoder.encode(new String(newPassword)).toCharArray());
-        userRepository.save(user);
+        return Arrays.equals(password, hashedPassword);
     }
 
     @Override
     public char[] hashPassword(char[] password) {
-        return passwordEncoder.encode(new String(password)).toCharArray();
+        return new char[0];
     }
 
     @Override
-    public void activate(User user) {
-        user.setActive(true);
-        userRepository.save(user);
-    }
+    public void changePassword(String username, char[] currentPassword, char[] newPassword) {
 
-    @Override
-    public void deactivate(User user) {
-        user.setActive(false);
-        userRepository.save(user);
     }
-
 
 }

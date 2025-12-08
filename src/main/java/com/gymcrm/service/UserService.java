@@ -10,15 +10,11 @@ public interface UserService {
 
     Optional<User> findByUsername(String username);
 
-    char[] hashPassword(char[] password);
-
     boolean authenticate(String username, char[] password);
 
-    void changePassword(String username, char[] currentPassword, char[] newPassword);
+    boolean matches(char[] password, char[] hashedPassword);
 
-    void activate(User user);
+    char[] hashPassword(char[] password);
 
-    void deactivate(User user);
-
-
+    void changePassword(String username,char[] currentPassword, char[] newPassword);
 }
