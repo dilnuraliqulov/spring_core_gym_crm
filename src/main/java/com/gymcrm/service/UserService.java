@@ -12,9 +12,11 @@ public interface UserService {
 
     boolean authenticate(String username, char[] password);
 
-    boolean matches(char[] password, char[] hashedPassword);
-
     char[] hashPassword(char[] password);
 
     void changePassword(String username,char[] currentPassword, char[] newPassword);
+
+    void activate(User user);
+
+    void deactivate(User user);
 }
