@@ -32,10 +32,8 @@ class TrainingServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        // Initialize TrainingType object
         TrainingType trainingType = new TrainingType(1L, "Yoga");
 
-        // Initialize Training object
         training = new Training();
         training.setId(1L);
         training.setTraineeId(101L);
