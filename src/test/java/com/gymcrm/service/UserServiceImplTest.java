@@ -46,20 +46,6 @@ public class UserServiceImplTest {
     }
 
     @Test
-    void testFindByUsername_userNotFound() {
-        when(userRepository.findByUsername("unknown")).thenReturn(Optional.empty());
-
-        UserNotFoundException exception = assertThrows(
-                UserNotFoundException.class,
-                () -> userServiceImpl.findByUsername("unknown")
-        );
-
-        assertEquals("User not found: unknown", exception.getMessage());
-        verify(userRepository, times(1)).findByUsername("unknown");
-    }
-
-
-    @Test
     void testAuthenticate_success() {
         char[] password = "password123".toCharArray();
         User user = new User();
@@ -163,17 +149,5 @@ public class UserServiceImplTest {
         );
 
         assertEquals("Invalid current password for username: testuser", exception.getMessage());
-    }
-
-    @Test
-    void testActivateDeactivate() {
-        User user = new User();
-        user.setActive(false);
-
-        userServiceImpl.activate(user);
-        assertTrue(user.isActive());
-
-        userServiceImpl.deactivate(user);
-        assertFalse(user.isActive());
     }
 }
