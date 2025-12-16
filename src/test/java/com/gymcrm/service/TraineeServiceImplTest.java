@@ -42,13 +42,10 @@ class TraineeServiceImplTest {
 
     @Test
     void testSaveTrainee_PersistsEntity() {
-        // Arrange
         when(traineeDao.save(any(Trainee.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        // Act
         Trainee result = traineeService.save(trainee);
 
-        // Assert
         assertEquals("ExistingUser", result.getUsername());
         assertEquals("ExistingPass", result.getPassword());
         assertEquals("John", result.getFirstName());

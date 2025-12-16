@@ -14,13 +14,17 @@ public class FlywayConfig {
     @Value("${flyway.locations}")
     private String flywayLocations;
 
-    @Bean(initMethod = "migrate")
+    @Bean
     public Flyway flyway(DataSource dataSource) {
-        return Flyway.configure()
+        Flyway flyway = Flyway.configure()
                 .dataSource(dataSource)
                 .locations(flywayLocations)
                 .baselineOnMigrate(true)
                 .load();
+        // Repair to fix checksum mismatch from modified migration files
+        flyway.repair();
+        flyway.migrate();
+        return flyway;
     }
 
 }

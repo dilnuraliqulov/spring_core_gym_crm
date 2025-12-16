@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -17,24 +18,26 @@ import java.util.List;
 public class Trainer {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
     private Long id;
 
-    @JoinColumn(name = "user_id",referencedColumnName = "id")
-    @OneToOne(cascade = CascadeType.ALL,optional = false)
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @OneToOne(cascade = CascadeType.ALL, optional = false)
     @ToString.Exclude
     @NotNull(message = "User can not be null")
     private User user;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "specialization")
+    @ToString.Exclude
+    private TrainingType specialization;
+
     @OneToMany(mappedBy = "trainer", cascade = CascadeType.ALL)
     @ToString.Exclude
-    private List<Training> trainings;
+    private List<Training> trainings = new ArrayList<>();
 
     @ManyToMany(mappedBy = "trainers")
     @ToString.Exclude
-    private List<Trainee> trainees;
-
-
-
+    private List<Trainee> trainees = new ArrayList<>();
 }

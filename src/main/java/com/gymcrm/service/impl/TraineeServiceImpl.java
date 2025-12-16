@@ -10,18 +10,19 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+
 @Slf4j
-@Service
+@Service("traineeServiceDao")
 @RequiredArgsConstructor
 public class TraineeServiceImpl implements TraineeService {
 
     private final GenericDao<Trainee> traineeDao;
 
-  @Override
-   public Trainee save(Trainee trainee) {
-       log.debug("Service:saving trainee {}", trainee);
-       return traineeDao.save(trainee);
-   }
+    @Override
+    public Trainee save(Trainee trainee) {
+        log.debug("Service: saving trainee {}", trainee);
+        return traineeDao.save(trainee);
+    }
 
     @Override
     public Optional<Trainee> findById(Long id) {

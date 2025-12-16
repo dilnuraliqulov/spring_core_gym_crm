@@ -3,12 +3,11 @@ package com.gymcrm.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -23,25 +22,26 @@ import java.util.List;
 public class Trainee {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
     private Long id;
 
     @Column(name = "date_of_birth")
+    @Temporal(TemporalType.DATE)
     @Past
     private Date dateOfBirth;
 
     @Column(name = "address")
     private String address;
 
-    @OneToOne(cascade = CascadeType.PERSIST,optional = false)
-    @JoinColumn(name = "user_id",referencedColumnName = "id",nullable=false)
+    @OneToOne(cascade = CascadeType.ALL, optional = false)
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     @NotNull(message = "User cannot be null")
     private User user;
 
-    @OneToMany(mappedBy = "trainee", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "trainee", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
-    private List<Training> trainings;
+    private List<Training> trainings = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(
@@ -50,6 +50,5 @@ public class Trainee {
             inverseJoinColumns = @JoinColumn(name = "trainer_id")
     )
     @ToString.Exclude
-    private List<Trainer> trainers;
-
+    private List<Trainer> trainers = new ArrayList<>();
 }

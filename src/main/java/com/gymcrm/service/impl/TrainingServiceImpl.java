@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Slf4j
-@Service
+@Service("trainingServiceDao")
 @RequiredArgsConstructor
 public class TrainingServiceImpl implements TrainingService {
 
@@ -41,6 +41,4 @@ public class TrainingServiceImpl implements TrainingService {
         log.debug("Service: fetching all trainings");
         return trainingDao.findAll();
     }
-
-
 }

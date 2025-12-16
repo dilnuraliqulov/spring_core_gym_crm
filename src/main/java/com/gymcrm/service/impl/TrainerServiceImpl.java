@@ -11,17 +11,18 @@ import java.util.List;
 import java.util.Optional;
 
 @Slf4j
-@Service
+@Service("trainerServiceDao")
 @RequiredArgsConstructor
 public class TrainerServiceImpl implements TrainerService {
 
     private final GenericDao<Trainer> trainerDao;
 
     @Override
-    public Trainer save (Trainer trainer) {
-        log.debug("Service:saving trainer {}", trainer);
+    public Trainer save(Trainer trainer) {
+        log.debug("Service: saving trainer {}", trainer);
         return trainerDao.save(trainer);
     }
+
     @Override
     public Optional<Trainer> findById(Long id) {
         log.info("Service: fetching trainer with id {}", id);
@@ -33,5 +34,4 @@ public class TrainerServiceImpl implements TrainerService {
         log.info("Service: fetching all trainers");
         return trainerDao.findAll();
     }
-
 }
