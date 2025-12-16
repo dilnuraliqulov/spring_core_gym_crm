@@ -23,7 +23,7 @@ import java.io.Serializable;
 public class User implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
     private Long id;
 
@@ -47,6 +47,6 @@ public class User implements Serializable {
     private char[] password;
 
     @Column(name = "active",nullable = false)
-    private boolean isActive;
+    private boolean active;
 
 }

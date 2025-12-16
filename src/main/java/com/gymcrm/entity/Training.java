@@ -19,7 +19,7 @@ import java.util.Date;
 public class Training {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
     private Long id;
 
@@ -46,6 +46,7 @@ public class Training {
     private TrainingType trainingType;
 
     @Column(name = "training_date", nullable = false)
+    @Temporal(TemporalType.DATE)
     @Future
     private Date trainingDate;
 

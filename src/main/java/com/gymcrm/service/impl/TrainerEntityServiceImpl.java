@@ -17,6 +17,7 @@ import com.gymcrm.service.AuthenticationService;
 import com.gymcrm.service.TrainerEntityService;
 import com.gymcrm.service.UserService;
 import com.gymcrm.util.UsernamePasswordGenerator;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -39,6 +40,7 @@ public class TrainerEntityServiceImpl implements TrainerEntityService, Activatio
     private final TrainingTypeRepository trainingTypeRepository;
     private final UserRepository userRepository;
     private final UserService userService;
+    private final EntityManager entityManager;
 
 
     @Override
@@ -78,6 +80,17 @@ public class TrainerEntityServiceImpl implements TrainerEntityService, Activatio
         Trainer savedTrainer = trainerRepository.save(trainer);
         log.info("Trainer profile created successfully with username: {}", username);
 
+        // Flush to ensure hashed password is saved to DB
+        entityManager.flush();
+
+        // Initialize lazy associations before detaching
+        if (savedTrainer.getSpecialization() != null) {
+            savedTrainer.getSpecialization().getTrainingTypeName();
+        }
+
+        // Detach to prevent further persistence of password changes
+        entityManager.detach(savedTrainer);
+
         // Return raw password for user (will be displayed once)
         savedTrainer.getUser().setPassword(rawPassword);
 
@@ -88,7 +101,14 @@ public class TrainerEntityServiceImpl implements TrainerEntityService, Activatio
     @Transactional(readOnly = true)
     public Optional<Trainer> findByUsername(String username) {
         log.debug("Finding trainer by username: {}", username);
-        return trainerRepository.findByUserUsername(username);
+        Optional<Trainer> trainerOpt = trainerRepository.findByUserUsername(username);
+        // Initialize lazy associations
+        trainerOpt.ifPresent(trainer -> {
+            if (trainer.getSpecialization() != null) {
+                trainer.getSpecialization().getTrainingTypeName();
+            }
+        });
+        return trainerOpt;
     }
 
     @Override

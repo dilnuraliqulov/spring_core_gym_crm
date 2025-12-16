@@ -22,11 +22,12 @@ import java.util.List;
 public class Trainee {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
     private Long id;
 
     @Column(name = "date_of_birth")
+    @Temporal(TemporalType.DATE)
     @Past
     private Date dateOfBirth;
 

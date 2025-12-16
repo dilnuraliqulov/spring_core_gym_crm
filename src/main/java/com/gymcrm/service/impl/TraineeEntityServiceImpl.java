@@ -16,6 +16,7 @@ import com.gymcrm.service.AuthenticationService;
 import com.gymcrm.service.TraineeEntityService;
 import com.gymcrm.service.UserService;
 import com.gymcrm.util.UsernamePasswordGenerator;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -35,6 +36,7 @@ public class TraineeEntityServiceImpl implements TraineeEntityService, Activatio
     private final TrainingRepository trainingRepository;
     private final UserRepository userRepository;
     private final UserService userService;
+    private final EntityManager entityManager;
 
 
     @Override
@@ -68,6 +70,11 @@ public class TraineeEntityServiceImpl implements TraineeEntityService, Activatio
 
         Trainee savedTrainee = traineeRepository.save(trainee);
         log.info("Trainee profile created successfully with username: {}", username);
+
+        // Flush to ensure hashed password is saved to DB
+        entityManager.flush();
+        // Detach to prevent further persistence of password changes
+        entityManager.detach(savedTrainee);
 
         // Return raw password for user (will be displayed once)
         savedTrainee.getUser().setPassword(rawPassword);

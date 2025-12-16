@@ -5,6 +5,7 @@ import com.gymcrm.entity.Trainer;
 import com.gymcrm.entity.Training;
 import com.gymcrm.entity.TrainingType;
 import com.gymcrm.service.*;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;

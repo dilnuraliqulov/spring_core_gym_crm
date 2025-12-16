@@ -13,7 +13,7 @@ public interface TraineeRepository extends JpaRepository<Trainee, Long> {
 
     Optional<Trainee> findByUserUsername(String username);
 
-    List<Trainee> findByUserIsActive(boolean isActive);
+    List<Trainee> findByUserActive(boolean active);
 
     boolean existsByUserUsername(String username);
 

@@ -12,11 +12,11 @@ public interface TrainerRepository extends JpaRepository<Trainer, Long> {
 
     Optional<Trainer> findByUserUsername(String username);
 
-    List<Trainer> findByUserIsActive(boolean isActive);
+    List<Trainer> findByUserActive(boolean active);
 
     boolean existsByUserUsername(String username);
 
-    @Query("SELECT t FROM Trainer t WHERE t.user.isActive = true AND t NOT IN " +
+    @Query("SELECT t FROM Trainer t WHERE t.user.active = true AND t NOT IN " +
            "(SELECT tr FROM Trainee te JOIN te.trainers tr WHERE te.user.username = :traineeUsername)")
     List<Trainer> findTrainersNotAssignedToTrainee(@Param("traineeUsername") String traineeUsername);
 
