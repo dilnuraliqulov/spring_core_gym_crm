@@ -13,6 +13,7 @@ import com.gymcrm.repository.TrainingRepository;
 import com.gymcrm.repository.TrainingTypeRepository;
 import com.gymcrm.repository.UserRepository;
 import com.gymcrm.service.impl.TrainerEntityServiceImpl;
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -45,6 +46,9 @@ class TrainerEntityServiceImplTest {
 
     @Mock
     private UserService userService;
+
+    @Mock
+    private EntityManager entityManager;
 
     @InjectMocks
     private TrainerEntityServiceImpl trainerEntityService;
