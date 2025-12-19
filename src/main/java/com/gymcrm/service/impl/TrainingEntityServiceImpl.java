@@ -39,7 +39,7 @@ public class TrainingEntityServiceImpl implements TrainingEntityService {
                                  Date trainingDate, Integer duration) {
         log.info("Adding training: {} for trainee: {} with trainer: {}", trainingName, traineeUsername, trainerUsername);
 
-        validateTrainingFields(traineeUsername, trainerUsername, trainingName, trainingTypeId, trainingDate, duration);
+        validateTrainingFieldsPartial(traineeUsername, trainerUsername, trainingName, trainingDate, duration);
 
         Trainee trainee = traineeRepository.findByUserUsername(traineeUsername)
                 .orElseThrow(() -> new TraineeNotFoundException("Trainee not found: " + traineeUsername));
@@ -47,8 +47,16 @@ public class TrainingEntityServiceImpl implements TrainingEntityService {
         Trainer trainer = trainerRepository.findByUserUsername(trainerUsername)
                 .orElseThrow(() -> new TrainerNotFoundException("Trainer not found: " + trainerUsername));
 
-        TrainingType trainingType = trainingTypeRepository.findById(trainingTypeId)
-                .orElseThrow(() -> new TrainingTypeNotFoundException("Training type not found with id: " + trainingTypeId));
+        // Use trainer's specialization if trainingTypeId is null
+        TrainingType trainingType;
+        if (trainingTypeId != null) {
+            trainingType = trainingTypeRepository.findById(trainingTypeId)
+                    .orElseThrow(() -> new TrainingTypeNotFoundException("Training type not found with id: " + trainingTypeId));
+        } else if (trainer.getSpecialization() != null) {
+            trainingType = trainer.getSpecialization();
+        } else {
+            throw new ValidationException("Training type is required - trainer has no specialization");
+        }
 
         Training training = new Training();
         training.setTrainee(trainee);
@@ -78,8 +86,8 @@ public class TrainingEntityServiceImpl implements TrainingEntityService {
         return trainingRepository.findAll();
     }
 
-    private void validateTrainingFields(String traineeUsername, String trainerUsername,
-                                        String trainingName, Long trainingTypeId,
+    private void validateTrainingFieldsPartial(String traineeUsername, String trainerUsername,
+                                        String trainingName,
                                         Date trainingDate, Integer duration) {
         if (traineeUsername == null || traineeUsername.isBlank()) {
             throw new ValidationException("Trainee username is required");
@@ -89,9 +97,6 @@ public class TrainingEntityServiceImpl implements TrainingEntityService {
         }
         if (trainingName == null || trainingName.isBlank()) {
             throw new ValidationException("Training name is required");
-        }
-        if (trainingTypeId == null) {
-            throw new ValidationException("Training type is required");
         }
         if (trainingDate == null) {
             throw new ValidationException("Training date is required");

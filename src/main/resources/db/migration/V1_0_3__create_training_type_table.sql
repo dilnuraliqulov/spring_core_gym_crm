@@ -1,5 +1,6 @@
 -- DDL
-CREATE TABLE training_type (
-                               id SERIAL PRIMARY KEY,
-                               name VARCHAR(50) NOT NULL
+CREATE TABLE trainers (
+                          id SERIAL PRIMARY KEY,
+                          specialization INT NOT NULL REFERENCES training_type(id),
+                          user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE
 );
