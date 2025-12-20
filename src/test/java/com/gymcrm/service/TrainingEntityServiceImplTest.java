@@ -158,6 +158,9 @@ class TrainingEntityServiceImplTest {
 
     @Test
     void addTraining_nullTrainingTypeId_throwsValidationException() {
+        when(traineeRepository.findByUserUsername("trainee.user")).thenReturn(Optional.of(testTrainee));
+        when(trainerRepository.findByUserUsername("trainer.user")).thenReturn(Optional.of(testTrainer));
+
         assertThrows(ValidationException.class, () ->
                 trainingEntityService.addTraining("trainee.user", "trainer.user", "Yoga", null, futureDate, 60));
     }

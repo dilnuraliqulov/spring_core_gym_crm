@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -16,6 +17,7 @@ import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
+@Import(YamlPropertiesConfig.class)
 @EnableTransactionManagement
 @RequiredArgsConstructor
 @EnableJpaRepositories(basePackages = "com.gymcrm.repository")
@@ -23,13 +25,13 @@ public class JpaConfig {
 
     private final DatabaseProperties dbProps;
 
-    @Value("${hibernate.dialect}")
+    @Value("${spring.jpa.properties.hibernate.dialect}")
     private String dialect;
 
-    @Value("${hibernate.show_sql}")
+    @Value("${spring.jpa.show-sql}")
     private boolean showSql;
 
-    @Value("${hibernate.hbm2ddl_auto}")
+    @Value("${spring.jpa.hibernate.ddl-auto}")
     private String hbm2ddlAuto;
 
     @Bean
@@ -54,6 +56,7 @@ public class JpaConfig {
         props.setProperty("hibernate.dialect", dialect);
         props.setProperty("hibernate.show_sql", String.valueOf(showSql));
         props.setProperty("hibernate.hbm2ddl.auto", hbm2ddlAuto);
+        // Disable JSON format mapper to avoid JAXB initialization issues
         emf.setJpaProperties(props);
 
         return emf;
