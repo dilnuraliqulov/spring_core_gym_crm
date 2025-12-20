@@ -8,6 +8,7 @@ import com.gymcrm.exception.InvalidOperationException;
 import com.gymcrm.exception.TrainerNotFoundException;
 import com.gymcrm.exception.TrainingTypeNotFoundException;
 import com.gymcrm.exception.ValidationException;
+import com.gymcrm.metrics.TrainerMetrics;
 import com.gymcrm.repository.TrainerRepository;
 import com.gymcrm.repository.TrainingRepository;
 import com.gymcrm.repository.TrainingTypeRepository;
@@ -41,6 +42,7 @@ public class TrainerEntityServiceImpl implements TrainerEntityService, Activatio
     private final UserRepository userRepository;
     private final UserService userService;
     private final EntityManager entityManager;
+    private final TrainerMetrics trainerMetrics;
 
 
     @Override

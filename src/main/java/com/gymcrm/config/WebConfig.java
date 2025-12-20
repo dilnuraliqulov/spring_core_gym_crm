@@ -23,7 +23,6 @@ import java.util.List;
         YamlPropertiesConfig.class,
         DatabaseProperties.class,
         JpaConfig.class,
-        FlywayConfig.class,
         SecurityConfig.class,
         AppConfig.class
 })

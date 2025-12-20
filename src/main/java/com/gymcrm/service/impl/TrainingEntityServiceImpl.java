@@ -8,6 +8,7 @@ import com.gymcrm.exception.TraineeNotFoundException;
 import com.gymcrm.exception.TrainerNotFoundException;
 import com.gymcrm.exception.TrainingTypeNotFoundException;
 import com.gymcrm.exception.ValidationException;
+import com.gymcrm.metrics.TrainingMetrics;
 import com.gymcrm.repository.TraineeRepository;
 import com.gymcrm.repository.TrainerRepository;
 import com.gymcrm.repository.TrainingRepository;
@@ -32,6 +33,7 @@ public class TrainingEntityServiceImpl implements TrainingEntityService {
     private final TraineeRepository traineeRepository;
     private final TrainerRepository trainerRepository;
     private final TrainingTypeRepository trainingTypeRepository;
+    private final TrainingMetrics trainingMetrics;
 
     @Override
     public Training addTraining(String traineeUsername, String trainerUsername,
