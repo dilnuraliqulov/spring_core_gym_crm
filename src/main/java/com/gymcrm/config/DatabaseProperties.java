@@ -8,17 +8,16 @@ import org.springframework.stereotype.Component;
 @Getter
 public class DatabaseProperties {
 
-    @Value("${database.driverClassName}")
+    @Value("${spring.datasource.driver-class-name}")
     private String driverClassName;
 
-    @Value("${database.url}")
+    @Value("${spring.datasource.url}")
     private String url;
 
-    @Value("${database.username}")
+    @Value("${spring.datasource.username}")
     private String username;
 
-    @Value("${database.password}")
+    @Value("${spring.datasource.password}")
     private String password;
-
 
 }
