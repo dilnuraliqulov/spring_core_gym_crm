@@ -7,6 +7,7 @@ import com.gymcrm.entity.User;
 import com.gymcrm.exception.InvalidOperationException;
 import com.gymcrm.exception.TraineeNotFoundException;
 import com.gymcrm.exception.ValidationException;
+import com.gymcrm.metrics.TraineeMetrics;
 import com.gymcrm.repository.TraineeRepository;
 import com.gymcrm.repository.TrainerRepository;
 import com.gymcrm.repository.TrainingRepository;
@@ -37,6 +38,7 @@ public class TraineeEntityServiceImpl implements TraineeEntityService, Activatio
     private final UserRepository userRepository;
     private final UserService userService;
     private final EntityManager entityManager;
+    private final TraineeMetrics traineeMetrics;
 
 
     @Override

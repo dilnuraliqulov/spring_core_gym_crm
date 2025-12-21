@@ -1,5 +1,3 @@
-# src/main/resources/application.yaml
-
 data:
   trainers:
     path: classpath:data/trainers.json
@@ -10,16 +8,12 @@ data:
   trainingtypes:
     path: classpath:data/trainingTypes.json
 
-#Database configuration
-database:
-  driverClassName: org.postgresql.Driver
-  url: jdbc:postgresql://localhost:5432/gymcrm_db
-  username: postgres
-  password: myadmin1234
-
-
-#Hibernate configuration
 spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/gymcrm_db
+    username: postgres
+    password: myadmin1234
   jpa:
     show-sql: true
     hibernate:
@@ -28,11 +22,67 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: false
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+  management:
+    endpoints:
+      web:
+        exposure:
+          include: health, info, metrics, prometheus
+    endpoint:
+      health:
+        show-details: always
 
-#Flyway
-flyway:
-  locations: classpath:db/migration
+---
 
+# Local environment
+spring:
+  config:
+    activate:
+      on-profile: local
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/gymcrm_local
+    username: local_user
+    password: local_password
 
+---
 
+# Dev environment
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://dev-server:5432/gymcrm_dev
+    username: dev_user
+    password: dev_password
 
+---
+
+# Staging environment
+spring:
+  config:
+    activate:
+      on-profile: stg
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://stg-server:5432/gymcrm_stg
+    username: stg_user
+    password: stg_password
+
+---
+
+# Production environment
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://prod-server:5432/gymcrm_prod
+    username: prod_user
+    password: prod_password
