@@ -18,7 +18,7 @@ services:
     depends_on:
       - postgres
     environment:
-      DB_HOST: localhost
+      DB_HOST: postgres
       DB_PORT: 5432
       DB_NAME: gymcrm_db
       DB_USER: postgres
