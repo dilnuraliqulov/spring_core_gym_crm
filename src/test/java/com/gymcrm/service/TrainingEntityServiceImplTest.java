@@ -1,5 +1,6 @@
 package com.gymcrm.service;
 
+import com.gymcrm.dto.request.TrainerWorkloadRequest;
 import com.gymcrm.entity.*;
 import com.gymcrm.exception.TraineeNotFoundException;
 import com.gymcrm.exception.TrainerNotFoundException;
@@ -39,6 +40,9 @@ class TrainingEntityServiceImplTest {
 
     @Mock
     private TrainingTypeRepository trainingTypeRepository;
+
+    @Mock
+    private WorkloadNotificationService workloadNotificationService;
 
     @InjectMocks
     private TrainingEntityServiceImpl trainingEntityService;
@@ -91,22 +95,54 @@ class TrainingEntityServiceImplTest {
 
     @Test
     void addTraining_success() {
+        // Mock repositories
         when(traineeRepository.findByUserUsername("trainee.user")).thenReturn(Optional.of(testTrainee));
         when(trainerRepository.findByUserUsername("trainer.user")).thenReturn(Optional.of(testTrainer));
         when(trainingTypeRepository.findById(1L)).thenReturn(Optional.of(testTrainingType));
-        when(trainingRepository.save(any(Training.class))).thenAnswer(i -> {
-            Training t = i.getArgument(0);
+        when(trainingRepository.save(any(Training.class))).thenAnswer(invocation -> {
+            Training t = invocation.getArgument(0);
             t.setId(1L);
             return t;
         });
 
+        // Call service
         Training result = trainingEntityService.addTraining(
-                "trainee.user", "trainer.user", "Morning Yoga", 1L, futureDate, 60);
+                "trainee.user", "trainer.user", "Morning Yoga", 1L, futureDate, 60
+        );
 
+        // Assertions
         assertNotNull(result);
+        assertEquals(1L, result.getId());
         assertEquals("Morning Yoga", result.getTrainingName());
         assertEquals(60, result.getDurationOfTraining());
+        assertEquals(testTrainee, result.getTrainee());
+        assertEquals(testTrainer, result.getTrainer());
+        assertEquals(testTrainingType, result.getTrainingType());
+
+        // Verify interactions
         verify(trainingRepository).save(any(Training.class));
+        verify(workloadNotificationService).notifyWorkloadService(result, TrainerWorkloadRequest.ActionType.ADD);
+    }
+
+    @Test
+    void addTraining_withoutTrainingType_usesTrainerSpecialization() {
+        testTrainer.setSpecialization(testTrainingType);
+
+        when(traineeRepository.findByUserUsername("trainee.user")).thenReturn(Optional.of(testTrainee));
+        when(trainerRepository.findByUserUsername("trainer.user")).thenReturn(Optional.of(testTrainer));
+        when(trainingRepository.save(any(Training.class))).thenAnswer(invocation -> {
+            Training t = invocation.getArgument(0);
+            t.setId(2L);
+            return t;
+        });
+
+        Training result = trainingEntityService.addTraining(
+                "trainee.user", "trainer.user", "Evening Pilates", null, futureDate, 45
+        );
+
+        assertNotNull(result);
+        assertEquals(testTrainingType, result.getTrainingType());
+        verify(workloadNotificationService).notifyWorkloadService(result, TrainerWorkloadRequest.ActionType.ADD);
     }
 
     @Test
