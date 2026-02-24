@@ -12,6 +12,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+
   app:
     build: .
     container_name: springcore-app
@@ -26,5 +27,12 @@ services:
     ports:
       - "8080:8080"
 
+    networks:
+      - gym-network
+
 volumes:
   postgres_data:
+
+networks:
+  gym-network:
+    external: true

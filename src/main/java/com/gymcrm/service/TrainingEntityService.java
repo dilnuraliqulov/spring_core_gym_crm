@@ -14,6 +14,8 @@ public interface TrainingEntityService {
                          Long trainingTypeId, Date trainingDate, Integer duration);
 
 
+    void deleteTraining(Long trainingId);
+
     Optional<Training> findTrainingById(Long id);
 
     List<Training> findAllTrainings();
