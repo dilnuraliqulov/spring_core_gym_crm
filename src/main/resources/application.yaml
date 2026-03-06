@@ -34,6 +34,15 @@ spring:
     openfeign:
       circuitbreaker:
         enabled: true
+  # ActiveMQ Configuration
+  activemq:
+    broker-url: ${ACTIVEMQ_BROKER_URL:tcp://localhost:61616}
+    user: ${ACTIVEMQ_USER:admin}
+    password: ${ACTIVEMQ_PASSWORD:admin}
+    packages:
+      trust-all: true
+  jms:
+    pub-sub-domain: false
 
 server:
   port: 8083
