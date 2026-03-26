@@ -1,0 +1,39 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:gymcrm-test;DB_CLOSE_DELAY=-1;MODE=PostgreSQL
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: sa
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  jms:
+    pub-sub-domain: false
+    cache:
+      enabled: false
+
+  activemq:
+    broker-url: vm://embedded?broker.persistent=false
+    user: test
+    password: test
+    in-memory: true
+
+  cloud:
+    discovery:
+      enabled: false
+
+eureka:
+  client:
+    enabled: false
+    register-with-eureka: false
+    fetch-registry: false
+
+logging:
+  level:
+    root: WARN
+    com.gymcrm: INFO

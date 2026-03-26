@@ -15,7 +15,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @EnableAsync
 public class Main {
 
-    private static final Logger log = LoggerFactory.getLogger(Main.class);
+    public static final Logger log = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) throws LifecycleException {
         SpringApplication.run(Main.class,args);
