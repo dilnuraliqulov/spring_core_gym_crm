@@ -24,5 +24,8 @@ COPY --from=build /app/target/gym-crm-1.0-SNAPSHOT.jar app.jar
 # Expose port
 EXPOSE 8080
 
+#Disable integration  in Docker environment
+ENV SPRING_PROFILES_ACTIVE=docker-no-integration
+
 # Run the application
 ENTRYPOINT ["java","-jar","app.jar"]
