@@ -54,7 +54,8 @@ public class TrainerEntityServiceImpl implements TrainerEntityService, Activatio
         TrainingType specialization = null;
         if (specializationId != null) {
             specialization = trainingTypeRepository.findById(specializationId)
-                    .orElseThrow(() -> new TrainingTypeNotFoundException("Training type not found with id: " + specializationId));
+                    .orElseThrow(() -> new TrainingTypeNotFoundException(
+                            "Training type not found with id: " + specializationId));
         }
 
         Set<String> existingUsernames = userRepository.findAll().stream()
@@ -75,25 +76,26 @@ public class TrainerEntityServiceImpl implements TrainerEntityService, Activatio
         user.setPassword(hashedPassword);
         user.setActive(true);
 
+        User savedUser = userRepository.save(user);
+
         Trainer trainer = new Trainer();
-        trainer.setUser(user);
+        trainer.setUser(savedUser);
         trainer.setSpecialization(specialization);
 
         Trainer savedTrainer = trainerRepository.save(trainer);
         log.info("Trainer profile created successfully with username: {}", username);
 
-        // Flush to ensure hashed password is saved to DB
         entityManager.flush();
 
-        // Initialize lazy associations before detaching
         if (savedTrainer.getSpecialization() != null) {
             savedTrainer.getSpecialization().getTrainingTypeName();
         }
 
-        // Detach to prevent further persistence of password changes
+        // Detach BOTH entities before putting raw password on response object
         entityManager.detach(savedTrainer);
+        entityManager.detach(savedUser);
 
-        // Return raw password for user (will be displayed once)
+        savedTrainer.setUser(savedUser);
         savedTrainer.getUser().setPassword(rawPassword);
 
         return savedTrainer;
@@ -115,7 +117,7 @@ public class TrainerEntityServiceImpl implements TrainerEntityService, Activatio
 
     @Override
     public Trainer updateProfile(String username, String firstName, String lastName,
-                                  Long specializationId, boolean isActive) {
+                                 Long specializationId, boolean isActive) {
         log.info("Updating trainer profile: {}", username);
 
         validateRequiredFields(firstName, lastName);

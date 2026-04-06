@@ -23,7 +23,7 @@ public class Trainer {
     private Long id;
 
     @JoinColumn(name = "user_id", referencedColumnName = "id")
-    @OneToOne(cascade = CascadeType.ALL, optional = false)
+    @OneToOne(optional = false)
     @ToString.Exclude
     @NotNull(message = "User can not be null")
     private User user;

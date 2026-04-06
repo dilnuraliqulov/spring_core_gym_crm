@@ -1,5 +1,6 @@
 package com.gymcrm.service.impl;
 
+import com.gymcrm.dto.request.TrainerWorkloadRequest.ActionType;
 import com.gymcrm.entity.Trainee;
 import com.gymcrm.entity.Trainer;
 import com.gymcrm.entity.Training;
@@ -14,6 +15,7 @@ import com.gymcrm.repository.TrainerRepository;
 import com.gymcrm.repository.TrainingRepository;
 import com.gymcrm.repository.TrainingTypeRepository;
 import com.gymcrm.service.TrainingEntityService;
+import com.gymcrm.service.WorkloadNotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+
 
 @Slf4j
 @Service("trainingServiceEntity")
@@ -34,6 +37,7 @@ public class TrainingEntityServiceImpl implements TrainingEntityService {
     private final TrainerRepository trainerRepository;
     private final TrainingTypeRepository trainingTypeRepository;
     private final TrainingMetrics trainingMetrics;
+    private final WorkloadNotificationService workloadNotificationService;
 
     @Override
     public Training addTraining(String traineeUsername, String trainerUsername,
@@ -71,6 +75,9 @@ public class TrainingEntityServiceImpl implements TrainingEntityService {
         Training savedTraining = trainingRepository.save(training);
         log.info("Training added successfully with id: {}", savedTraining.getId());
 
+        // Notify workload microservice about the new training
+        workloadNotificationService.notifyWorkloadService(savedTraining, ActionType.ADD);
+
         return savedTraining;
     }
 
@@ -86,6 +93,20 @@ public class TrainingEntityServiceImpl implements TrainingEntityService {
     public List<Training> findAllTrainings() {
         log.debug("Finding all trainings");
         return trainingRepository.findAll();
+    }
+
+    @Override
+    public void deleteTraining(Long trainingId) {
+        log.info("Deleting (cancelling) training with id: {}", trainingId);
+
+        Training training = trainingRepository.findById(trainingId)
+                .orElseThrow(() -> new ValidationException("Training not found with id: " + trainingId));
+
+        // Notify workload microservice about the cancelled training before deletion
+        workloadNotificationService.notifyWorkloadService(training, ActionType.DELETE);
+
+        trainingRepository.delete(training);
+        log.info("Training deleted successfully with id: {}", trainingId);
     }
 
     private void validateTrainingFieldsPartial(String traineeUsername, String trainerUsername,

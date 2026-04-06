@@ -1,0 +1,31 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:gymcrm_integration;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    database-platform: org.hibernate.dialect.H2Dialect
+    show-sql: false
+
+  # Disable Eureka for integration tests
+  cloud:
+    discovery:
+      enabled: false
+
+eureka:
+  client:
+    enabled: false
+
+# Point Training Workload calls to WireMock
+training-workload:
+  service:
+    url: http://localhost:8082
+server:
+  port: 8081
+
+jwt:
+  secret: test-secret-key-for-integration-tests
+  expiration: 3600000

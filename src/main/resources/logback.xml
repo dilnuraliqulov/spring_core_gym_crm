@@ -52,6 +52,18 @@
         <appender-ref ref="CONSOLE" />
     </logger>
 
+    <!-- Feign client logging -->
+    <logger name="com.gymcrm.feign" level="DEBUG" additivity="false">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE" />
+    </logger>
+
+    <!-- Resilience4j logging -->
+    <logger name="io.github.resilience4j" level="DEBUG" additivity="false">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE" />
+    </logger>
+
     <root level="INFO">
         <appender-ref ref="CONSOLE" />
     </root>

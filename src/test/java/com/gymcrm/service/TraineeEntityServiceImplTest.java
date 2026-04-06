@@ -7,6 +7,7 @@ import com.gymcrm.entity.User;
 import com.gymcrm.exception.InvalidOperationException;
 import com.gymcrm.exception.TraineeNotFoundException;
 import com.gymcrm.exception.ValidationException;
+import com.gymcrm.metrics.TraineeMetrics;
 import com.gymcrm.repository.TraineeRepository;
 import com.gymcrm.repository.TrainerRepository;
 import com.gymcrm.repository.TrainingRepository;
@@ -20,9 +21,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -50,6 +53,9 @@ class TraineeEntityServiceImplTest {
     @Mock
     private EntityManager entityManager;
 
+    @Mock
+    private TraineeMetrics traineeMetrics;
+
     @InjectMocks
     private TraineeEntityServiceImpl traineeEntityService;
 
@@ -73,42 +79,78 @@ class TraineeEntityServiceImplTest {
         testTrainee.setAddress("123 Main St");
     }
 
-
     @Test
     void createProfile_success() {
         when(userRepository.findAll()).thenReturn(Collections.emptyList());
-        when(userService.hashPassword(any(char[].class))).thenReturn("encodedPassword".toCharArray());
-        when(traineeRepository.save(any(Trainee.class))).thenAnswer(i -> {
-            Trainee t = i.getArgument(0);
-            t.setId(1L);
-            return t;
+
+        when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
+            User user = invocation.getArgument(0);
+            user.setId(1L);
+            return user;
         });
+
+        when(userService.hashPassword(any(char[].class)))
+                .thenReturn("encodedPassword".toCharArray());
+
+        when(traineeRepository.save(any(Trainee.class))).thenAnswer(invocation -> {
+            Trainee trainee = invocation.getArgument(0);
+            trainee.setId(1L);
+            return trainee;
+        });
+
+        doNothing().when(entityManager).flush();
+        doNothing().when(entityManager).detach(any());
 
         Trainee result = traineeEntityService.createProfile("John", "Doe", new Date(), "123 Main St");
 
         assertNotNull(result);
+        assertNotNull(result.getUser());
         assertEquals("John.Doe", result.getUser().getUsername());
         assertTrue(result.getUser().isActive());
-        verify(traineeRepository).save(any(Trainee.class));
+        assertNotNull(result.getUser().getPassword());
+
+        verify(userRepository).findAll();
+        verify(userRepository).save(any(User.class));
         verify(userService).hashPassword(any(char[].class));
+        verify(traineeRepository).save(any(Trainee.class));
+        verify(entityManager).flush();
+        verify(entityManager).detach(any(Trainee.class));
     }
 
     @Test
     void createProfile_withExistingUsername_generatesUnique() {
         User existingUser = new User();
         existingUser.setUsername("John.Doe");
+
         when(userRepository.findAll()).thenReturn(List.of(existingUser));
-        when(userService.hashPassword(any(char[].class))).thenReturn("encodedPassword".toCharArray());
-        when(traineeRepository.save(any(Trainee.class))).thenAnswer(i -> {
-            Trainee t = i.getArgument(0);
-            t.setId(1L);
-            return t;
+
+        when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
+            User user = invocation.getArgument(0);
+            user.setId(1L);
+            return user;
         });
+
+        when(userService.hashPassword(any(char[].class)))
+                .thenReturn("encodedPassword".toCharArray());
+
+        when(traineeRepository.save(any(Trainee.class))).thenAnswer(invocation -> {
+            Trainee trainee = invocation.getArgument(0);
+            trainee.setId(1L);
+            return trainee;
+        });
+
+        doNothing().when(entityManager).flush();
+        doNothing().when(entityManager).detach(any());
 
         Trainee result = traineeEntityService.createProfile("John", "Doe", new Date(), "123 Main St");
 
         assertNotNull(result);
         assertEquals("John.Doe1", result.getUser().getUsername());
+
+        verify(userRepository).save(any(User.class));
+        verify(traineeRepository).save(any(Trainee.class));
+        verify(entityManager).flush();
+        verify(entityManager).detach(any(Trainee.class));
     }
 
     @Test
@@ -152,14 +194,21 @@ class TraineeEntityServiceImplTest {
                 traineeEntityService.authenticate("John.Doe", "wrongPassword".toCharArray()));
     }
 
-
     @Test
     void changePassword_success() {
         when(traineeRepository.existsByUserUsername("John.Doe")).thenReturn(true);
 
-        traineeEntityService.changePassword("John.Doe", "currentPassword".toCharArray(), "newPassword".toCharArray());
+        traineeEntityService.changePassword(
+                "John.Doe",
+                "currentPassword".toCharArray(),
+                "newPassword".toCharArray()
+        );
 
-        verify(userService).changePassword("John.Doe", "currentPassword".toCharArray(), "newPassword".toCharArray());
+        verify(userService).changePassword(
+                "John.Doe",
+                "currentPassword".toCharArray(),
+                "newPassword".toCharArray()
+        );
     }
 
     @Test
@@ -169,7 +218,6 @@ class TraineeEntityServiceImplTest {
         assertThrows(TraineeNotFoundException.class, () ->
                 traineeEntityService.changePassword("unknown", "current".toCharArray(), "new".toCharArray()));
     }
-
 
     @Test
     void activate_success() {
@@ -211,7 +259,6 @@ class TraineeEntityServiceImplTest {
                 traineeEntityService.deactivate("John.Doe"));
     }
 
-
     @Test
     void findByUsername_success() {
         when(traineeRepository.findByUserUsername("John.Doe")).thenReturn(Optional.of(testTrainee));
@@ -224,13 +271,23 @@ class TraineeEntityServiceImplTest {
 
     @Test
     void updateProfile_success() {
+        Date newDateOfBirth = new Date();
+
         when(traineeRepository.findByUserUsername("John.Doe")).thenReturn(Optional.of(testTrainee));
         when(traineeRepository.save(any(Trainee.class))).thenReturn(testTrainee);
 
-        Trainee result = traineeEntityService.updateProfile("John.Doe", "Jane", "Smith", new Date(), "456 Oak Ave", true);
+        Trainee result = traineeEntityService.updateProfile(
+                "John.Doe",
+                "Jane",
+                "Smith",
+                newDateOfBirth,
+                "456 Oak Ave",
+                true
+        );
 
         assertEquals("Jane", result.getUser().getFirstName());
         assertEquals("Smith", result.getUser().getLastName());
+        assertEquals("456 Oak Ave", result.getAddress());
         verify(traineeRepository).save(testTrainee);
     }
 
@@ -250,7 +307,6 @@ class TraineeEntityServiceImplTest {
         assertThrows(TraineeNotFoundException.class, () ->
                 traineeEntityService.deleteByUsername("unknown"));
     }
-
 
     @Test
     void getTrainings_success() {
@@ -296,6 +352,8 @@ class TraineeEntityServiceImplTest {
         Trainee result = traineeEntityService.updateTrainersList("John.Doe", List.of("trainer1"));
 
         assertNotNull(result);
+        assertEquals(1, testTrainee.getTrainers().size());
+        assertEquals("trainer1", testTrainee.getTrainers().get(0).getUser().getUsername());
         verify(traineeRepository).save(testTrainee);
     }
 
@@ -315,4 +373,3 @@ class TraineeEntityServiceImplTest {
         assertFalse(traineeEntityService.isActive("John.Doe"));
     }
 }
-

@@ -11,20 +11,47 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - gym-network
+
+  activemq:
+    image: apache/activemq-artemis:latest
+    container_name: activemq
+    ports:
+      - "61616:61616"
+      - "8161:8161"
+    environment:
+      ARTEMIS_USER: admin
+      ARTEMIS_PASSWORD: admin
+    volumes:
+      - activemq_data:/var/lib/artemis-instance
+    networks:
+      - gym-network
 
   app:
     build: .
     container_name: springcore-app
     depends_on:
       - postgres
+      - activemq
     environment:
       DB_HOST: postgres
       DB_PORT: 5432
       DB_NAME: gymcrm_db
       DB_USER: postgres
       DB_PASS: myadmin1234
+      ACTIVEMQ_BROKER_URL: tcp://activemq:61616
+      ACTIVEMQ_USER: admin
+      ACTIVEMQ_PASSWORD: admin
     ports:
       - "8080:8080"
+    networks:
+      - gym-network
 
 volumes:
   postgres_data:
+  activemq_data:
+
+networks:
+  gym-network:
+    driver: bridge

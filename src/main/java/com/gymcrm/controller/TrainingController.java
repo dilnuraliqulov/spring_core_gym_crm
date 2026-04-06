@@ -67,6 +67,32 @@ public class TrainingController {
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "Delete training", description = "Cancels/deletes a training session (requires authentication)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Training deleted successfully"),
+            @ApiResponse(responseCode = "401", description = "Authentication failed",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Training not found",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    @DeleteMapping("/{trainingId}")
+    public ResponseEntity<Void> deleteTraining(
+            @Parameter(description = "Training ID to delete", required = true)
+            @PathVariable Long trainingId,
+            @Parameter(description = "Username for authentication", required = true)
+            @RequestHeader("X-Username") String authUsername,
+            @Parameter(description = "Password for authentication", required = true)
+            @RequestHeader("X-Password") String password) {
+
+        authenticate(authUsername, password);
+
+        log.info("Deleting training with id: {}", trainingId);
+        trainingService.deleteTraining(trainingId);
+        log.info("Training deleted successfully");
+
+        return ResponseEntity.ok().build();
+    }
+
     private void authenticate(String username, String password) {
         if (!userService.authenticate(username, password.toCharArray())) {
             throw new AuthenticationException("Invalid username or password");
