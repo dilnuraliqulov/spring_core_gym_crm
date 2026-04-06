@@ -32,4 +32,6 @@ public class TrainingType {
     @OneToMany(mappedBy="trainingType",cascade = CascadeType.ALL)
     @ToString.Exclude
     private List<Training>trainings;
+
+
 }

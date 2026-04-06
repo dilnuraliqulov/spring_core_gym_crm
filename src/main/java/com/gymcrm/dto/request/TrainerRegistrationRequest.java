@@ -1,5 +1,6 @@
 package com.gymcrm.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -22,6 +23,7 @@ public class TrainerRegistrationRequest {
     private String lastName;
 
     @NotNull(message = "Specialization is required")
+    @JsonAlias("specialization")
     @Schema(description = "Training type ID for specialization", required = true, example = "1")
     private Long specializationId;
 }

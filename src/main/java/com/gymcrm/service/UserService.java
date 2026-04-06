@@ -14,4 +14,5 @@ public interface UserService extends AuthenticationService {
     char[] hashPassword(char[] password);
 
     User save(User user);
+
 }

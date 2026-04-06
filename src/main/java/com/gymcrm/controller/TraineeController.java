@@ -8,6 +8,7 @@ import com.gymcrm.dto.response.*;
 import com.gymcrm.entity.Trainee;
 import com.gymcrm.entity.Trainer;
 import com.gymcrm.entity.Training;
+import com.gymcrm.entity.User;
 import com.gymcrm.exception.AuthenticationException;
 import com.gymcrm.exception.InvalidOperationException;
 import com.gymcrm.exception.TraineeNotFoundException;
@@ -256,8 +257,13 @@ public class TraineeController {
             @Parameter(description = "Password for authentication", required = true)
             @RequestHeader("X-Password") String password) {
 
-        authenticate(request.getUsername(), password);
+        User user = userService.findByUsername(request.getUsername())
+                .orElseThrow(() -> new TraineeNotFoundException("Trainee not found: " + request.getUsername()));
 
+        if (!new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder()
+                .matches(password, new String(user.getPassword()))) {
+            throw new AuthenticationException("Invalid username or password");
+        }
         Trainee trainee = traineeService.findByUsername(request.getUsername())
                 .orElseThrow(() -> new TraineeNotFoundException("Trainee not found: " + request.getUsername()));
 
@@ -293,11 +299,13 @@ public class TraineeController {
                         trainer.getUser().getUsername(),
                         trainer.getUser().getFirstName(),
                         trainer.getUser().getLastName(),
-                        trainer.getSpecialization() != null ? trainer.getSpecialization().getTrainingTypeName() : null
+                        trainer.getSpecialization() != null
+                                ? trainer.getSpecialization().getTrainingTypeName() : null
                 ))
                 .collect(Collectors.toList());
 
         return new TraineeProfileResponse(
+                trainee.getUser().getUsername(),   // ADD username as first argument
                 trainee.getUser().getFirstName(),
                 trainee.getUser().getLastName(),
                 trainee.getDateOfBirth(),
