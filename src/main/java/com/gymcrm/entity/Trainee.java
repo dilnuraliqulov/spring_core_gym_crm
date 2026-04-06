@@ -34,7 +34,7 @@ public class Trainee {
     @Column(name = "address")
     private String address;
 
-    @OneToOne(cascade = CascadeType.ALL, optional = false)
+    @OneToOne(optional = false)
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     @NotNull(message = "User cannot be null")
     private User user;

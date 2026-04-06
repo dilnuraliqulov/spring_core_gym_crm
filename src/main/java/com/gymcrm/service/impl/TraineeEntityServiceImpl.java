@@ -65,20 +65,23 @@ public class TraineeEntityServiceImpl implements TraineeEntityService, Activatio
         user.setPassword(hashedPassword);
         user.setActive(true);
 
+        User savedUser = userRepository.save(user);
+
         Trainee trainee = new Trainee();
-        trainee.setUser(user);
+        trainee.setUser(savedUser);
         trainee.setDateOfBirth(dateOfBirth);
         trainee.setAddress(address);
 
         Trainee savedTrainee = traineeRepository.save(trainee);
         log.info("Trainee profile created successfully with username: {}", username);
 
-        // Flush to ensure hashed password is saved to DB
         entityManager.flush();
-        // Detach to prevent further persistence of password changes
-        entityManager.detach(savedTrainee);
 
-        // Return raw password for user (will be displayed once)
+        // Detach BOTH entities before putting raw password on response object
+        entityManager.detach(savedTrainee);
+        entityManager.detach(savedUser);
+
+        savedTrainee.setUser(savedUser);
         savedTrainee.getUser().setPassword(rawPassword);
 
         return savedTrainee;
@@ -98,7 +101,7 @@ public class TraineeEntityServiceImpl implements TraineeEntityService, Activatio
 
         validateRequiredFields(firstName, lastName);
 
-              Trainee trainee = traineeRepository.findByUserUsername(username)
+        Trainee trainee = traineeRepository.findByUserUsername(username)
                 .orElseThrow(() -> new TraineeNotFoundException("Trainee not found: " + username));
 
         User user = trainee.getUser();
@@ -122,7 +125,6 @@ public class TraineeEntityServiceImpl implements TraineeEntityService, Activatio
         Trainee trainee = traineeRepository.findByUserUsername(username)
                 .orElseThrow(() -> new TraineeNotFoundException("Trainee not found: " + username));
 
-        // Hard delete - cascade will delete related trainings
         traineeRepository.delete(trainee);
 
         log.info("Trainee deleted successfully: {}", username);
@@ -131,7 +133,7 @@ public class TraineeEntityServiceImpl implements TraineeEntityService, Activatio
     @Override
     @Transactional(readOnly = true)
     public List<Training> getTrainings(String username, Date fromDate, Date toDate,
-                                        String trainerName, String trainingTypeName) {
+                                       String trainerName, String trainingTypeName) {
         log.info("Getting trainings for trainee: {} with criteria", username);
 
         if (!traineeRepository.existsByUserUsername(username)) {
@@ -180,7 +182,7 @@ public class TraineeEntityServiceImpl implements TraineeEntityService, Activatio
         }
 
         trainee.setTrainers(new ArrayList<>(trainers));
-       Trainee updatedTrainee = traineeRepository.save(trainee);
+        Trainee updatedTrainee = traineeRepository.save(trainee);
 
         log.info("Trainers list updated successfully for trainee: {}", username);
         return updatedTrainee;
@@ -205,12 +207,10 @@ public class TraineeEntityServiceImpl implements TraineeEntityService, Activatio
     public boolean authenticate(String username, char[] password) {
         log.debug("Authenticating trainee: {}", username);
 
-        // Verify this is a trainee
         if (!traineeRepository.existsByUserUsername(username)) {
             throw new TraineeNotFoundException("Trainee not found: " + username);
         }
 
-        // Delegate to UserService
         return userService.authenticate(username, password);
     }
 
@@ -218,12 +218,10 @@ public class TraineeEntityServiceImpl implements TraineeEntityService, Activatio
     public void changePassword(String username, char[] currentPassword, char[] newPassword) {
         log.info("Changing password for trainee: {}", username);
 
-        // Verify this is a trainee
         if (!traineeRepository.existsByUserUsername(username)) {
             throw new TraineeNotFoundException("Trainee not found: " + username);
         }
 
-        // Delegate to UserService
         userService.changePassword(username, currentPassword, newPassword);
         log.info("Password changed successfully for trainee: {}", username);
     }
@@ -257,7 +255,6 @@ public class TraineeEntityServiceImpl implements TraineeEntityService, Activatio
 
         User user = trainee.getUser();
 
-        // Non-idempotent check
         if (!user.isActive()) {
             log.warn("Trainee is already inactive: {}", username);
             throw new InvalidOperationException("Trainee is already inactive: " + username);
@@ -289,4 +286,3 @@ public class TraineeEntityServiceImpl implements TraineeEntityService, Activatio
         }
     }
 }
-

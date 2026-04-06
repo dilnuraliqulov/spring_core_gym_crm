@@ -10,4 +10,6 @@ public interface TrainingTypeRepository extends JpaRepository<TrainingType, Long
     Optional<TrainingType> findByTrainingTypeName(String trainingTypeName);
 
     boolean existsByTrainingTypeName(String trainingTypeName);
+
+
 }

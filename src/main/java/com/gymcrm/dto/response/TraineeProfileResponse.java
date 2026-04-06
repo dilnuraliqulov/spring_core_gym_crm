@@ -14,6 +14,10 @@ import java.util.List;
 @Schema(description = "Trainee profile response")
 public class TraineeProfileResponse {
 
+
+    @Schema(description = "Username", example = "Alice.Smith")
+    private String username;
+
     @Schema(description = "First name", example = "John")
     private String firstName;
 
